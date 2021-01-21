@@ -4,100 +4,8 @@ Nathan Damon
 This is the cpp file for the PathFinding Class.
 */
 
-//////////////////////////////////////////////////////////////////////////////////////////
-// Below is a copy of Path Finding.cpp (My first path finding program or PathFinding"V1")
-//////////////////////////////////////////////////////////////////////////////////////////
-/*Path Finding
-Nathan Damon
-9/5/2020
-This program will find a path through a given 2d grid.
-*/
 
-
-#include <iostream>
-using std::cout;
-using std::cin;
-using std::endl;
-#include <vector>
-using std::vector;
-#include <Windows.h>
-#include <conio.h>
-#include <random>
-using std::random_device;
-#include <string>
-using std::string;
-#include <iomanip>
-using std::setw;
-using std::right;
-#include <sstream>
-using std::istringstream;
-#include <fstream>
-using std::ofstream;
-using std::ifstream;
-using std::ios;
-//#include <map>
-//using std::map;
-//#include <utility>
-//using std::pair;
-#include <ios>
-using std::left;
-#include <algorithm>
-#include <iterator>
-
-using std::size_t;
-
-class Path_finding
-{
-public:
-    Path_finding(int x, int y) :
-        _xlength{ x },
-        _yheight{ y },
-        _grid(x* y, -1),
-        /*_grid{
-           0,   10,   20,   32,   42,   52,   60,   70,   80,   90,
-         102,  110,  122,  132,  142,  150,  162,  170,  180,  190,
-         200,  210,  220,  230,  240,  250,  260,  270,  280,  290,
-         302,  310,  320,  332,  340,  352,  360,  370,  380,  390,
-         400,  410,  420,  432,  442,  450,  460,  470,  480,  490,
-         502,  510,  522,  532,  542,  552,  560,  570,  580,  592,
-         602,  610,  620,  630,  642,  652,  662,  672,  682,  692,
-         702,  710,  720,  732,  740,  750,  760,  772,  780,  790,
-         800,  810,  820,  832,  840,  852,  860,  870,  880,  890,
-         902,  912,  920,  930,  940,  950,  960,  972,  980,  990 },*/
-        _path(x* y, -1), // flow grid
-        _alg_values{}, // list of values in order of distance from start
-        _direct_path(x* y, -1), // the direct path from start to finish
-        _alg_values_location{ 0 }, // current position in agl_values
-        _start{ 0 },
-        _finish{ 99 },
-        _datacount{ 0 },
-        _itercount{ 1 },
-        _pathend{ false },
-        _backtrack{ false }
-    {};
-    void grid_visual(HANDLE& hConsole); // Visuals
-    void pick_point(); // Pick start and finish values
-    void algorithm(); // Produces a grid of values with _start as 0 expanding outward
-    void create_path(); // Identifies the quickest path
-    void grid_create(random_device& r); // Creates a grid with random obsticals
-
-    bool _pathend;
-    bool _backtrack;
-
-    vector<int> _direct_path;
-    int _xlength;// grid length not last value in x
-    int _yheight;// grid height not last value in y
-    vector<int> _grid;
-    vector<int> _path;
-
-private:
-    vector<int> _alg_values;
-    int _start;
-    int _finish;
-    unsigned _alg_values_location;
-    unsigned _datacount;
-    int _itercount;
-};
+#include "PathFindingV3.h"
 
 // Makes it possible to color text
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -171,7 +79,47 @@ int main()
     cin >> end;
 }
 
-void Path_finding::grid_visual(HANDLE& hConsole)
+void PathFindingV3::grid_create(random_device& r)
+{
+    int shift_data = 0; // For moving data to adjacent local areas
+    std::default_random_engine e1(r());
+    std::uniform_int_distribution<int> uniform_dist(0, _height * _width - 1);
+
+    for (int i = 0; i < (_height * _width); i++) // Makes the grid have its positions marked and ready for management
+    {
+        _grid[i] = i * 10;
+    }
+
+    for (unsigned i = 0; i < ((_height * _width) / 3); i++) // Places a 2 randomly into _grid
+    {
+        shift_data = uniform_dist(e1);
+        //cout << "Data point: " << shift_data << endl;
+        if (shift_data < -1)
+            i--;
+        else if (shift_data > _height* _width - 1)
+            i--;
+        else
+        {
+            if (_grid[shift_data] % 10 == 0) // Center
+                _grid[shift_data] += 2;
+            else if ((shift_data - 1) > 0 && _grid[shift_data - 1] % 10 == 0) // Axis 1a
+                _grid[shift_data - 1] += 2;
+            else if ((shift_data + 1) < (_height * _width) && _grid[shift_data + 1] % 10 == 0) // Axis 1b
+                _grid[shift_data + 1] += 2;
+            else if ((shift_data - _width) > 0 && _grid[shift_data - _width] % 10 == 0) // Axis 2a
+                _grid[shift_data - _width] += 2;
+            else if ((shift_data + _width) < (_height * _width) && _grid[shift_data + _width] % 10 == 0) // Axis 2b
+                _grid[shift_data + _width] += 2;
+            else
+            {
+                cout << "Placement cancel" << endl;
+                i--;
+            }
+        }
+    }
+}
+
+void PathFindingV3::grid_visual(HANDLE& hConsole)
 {
     auto color_text = [](int color, HANDLE& hConsole) // Color based on input
     {
@@ -228,7 +176,7 @@ void Path_finding::grid_visual(HANDLE& hConsole)
 
 }
 
-void Path_finding::pick_point()
+void PathFindingV3::pick_point()
 {
     string select_str;
     int tempvalue = -1;
@@ -279,281 +227,7 @@ void Path_finding::pick_point()
     _finish = tempvalue;
 }
 
-void Path_finding::algorithm()
-{
-    int pos = -1;
-    int ystart = 1; // Counting from one above pos
-    int yfinish = 2; // Counting to one below pos 
-    int xstart = 1; // Counting from one left of pos
-    int xfinish = 2; // Counting to one right of pos
-
-    int count = _datacount;
-    _datacount = 0;
-
-    for (int i = 0; i < count + 1; i++)
-    {
-        //cout << "_alg_values_location: " << _alg_values_location + i << endl;
-        pos = _alg_values[_alg_values_location + i];
-        //cout << "data: " << _alg_values.size() << endl;
-        //cout << "Pos: " << pos << endl;
-        if ((pos - _xlength) < 0)
-            ystart = 0;
-        else
-            ystart = 1;
-
-        if ((pos + _xlength) > (_yheight * _xlength) - 1)
-            yfinish = 1;
-        else
-            yfinish = 2;
-
-        if ((pos % _xlength) == 0)
-            xstart = 0;
-        else
-            xstart = 1;
-
-        if ((pos % _xlength) == (_xlength - 1))
-            xfinish = 1;
-        else
-            xfinish = 2;
-
-        for (int y = (pos / _xlength) - ystart; y < (pos / _xlength) + yfinish; y++)
-        {
-            if ((y == (pos / _xlength) - 1) || (y == (pos / _xlength) + 1))
-            {
-                if (_grid[y * _xlength + (pos % _xlength)] % 10 == 0)
-                    if (_path[y * _xlength + (pos % _xlength)] == -1)
-                    {
-                        _datacount++;
-                        //cout << "_datacount: " << _datacount << endl;
-                        _path[y * _xlength + (pos % _xlength)] = _itercount;
-                        _alg_values.push_back(y * _xlength + (pos % _xlength));
-                        if ((y * _xlength + (pos % _xlength)) == _finish)
-                        {
-                            _backtrack = true;
-                            break;
-                        }
-                    }
-            }
-            else
-            {
-                for (int x = (pos % _xlength) - xstart; x < (pos % _xlength) + xfinish; x++)
-                {
-                    if (_grid[y * _xlength + x] % 10 == 0)
-                        if (_path[y * _xlength + x] == -1)
-                        {
-                            _datacount++;
-                            //cout << "_datacount: " << _datacount << endl;
-                            _path[y * _xlength + x] = _itercount;
-                            _alg_values.push_back(y * _xlength + x);
-                            if ((y * _xlength + x) == _finish)
-                            {
-                                _backtrack = true;
-                                break;
-                            }
-                        }
-                }
-            }
-            if (_backtrack)
-                break;
-        }
-        //cout << endl;
-        if (_backtrack)
-            break;
-    }
-    //cout << endl;
-    //cout << endl;
-    if (_datacount == 0)
-    {
-        _pathend = true;
-        cout << "Path end." << endl;
-    }
-    //cout << "_alg_values_location: " << _alg_values_location;
-    _alg_values_location += count;//_alg_values_location += _datacount;  
-    //cout << " -> " <<_alg_values_location << endl;
-    //cout << "_itercount: " << _itercount << endl;
-    _itercount++;
-
-}
-
-void Path_finding::create_path()
-{
-    int pos = -1;
-    int ystart = 1; // Counting from one above pos
-    int yfinish = 2; // Counting to one below pos 
-    int xstart = 1; // Counting from one left of pos
-    int xfinish = 2; // Counting to one right of pos
-    vector<int> backwards_path(_itercount, (_yheight * _xlength - 1));
-    int start_x = _start % _xlength;
-    int start_y = _start / _xlength;
-    int closer = 0; //((((_finish % _xlength) - start_x) * ((_finish % _xlength) - start_x)) + ((_finish / _xlength) - start_y) * ((_finish / _xlength) - start_y)); // a^2 + b^2
-    //int closer_reset = closer;
-    int old_path_value = _itercount + 10;
-
-    auto pythagorean = [](int x1, int y1, int x2, int y2) // pythagorean
-    {
-        return (((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1))); // a^2 + b^2
-    };
-    backwards_path[0] = (_finish);
-    cout << backwards_path.size() << endl;
-    cout << closer << endl;
-    for (int i = 0; i < _itercount - 1; i++)
-    {
-
-        pos = backwards_path[i];
-        if ((pos - _xlength) < 0)
-            ystart = 0;
-        else
-            ystart = 1;
-
-        if ((pos + _xlength) > (_xlength * _yheight) - 1)
-            yfinish = 1;
-        else
-            yfinish = 2;
-
-        if ((pos % _xlength) == 0)
-            xstart = 0;
-        else
-            xstart = 1;
-
-        if ((pos % _xlength) == _xlength - 1)
-            xfinish = 1;
-        else
-            xfinish = 2;
-
-        for (int y = (pos / _xlength) - ystart; y < (pos / _xlength) + yfinish; y++)
-        {
-            if ((y == (pos / _xlength) - 1) || (y == (pos / _xlength) + 1))
-            {
-                if (_path[y * _xlength + (pos % _xlength)] <= old_path_value)
-                {
-                    if ((_path[y * _xlength + (pos % _xlength)]) > -1)
-                    {
-                        if (closer == 0)
-                            closer = pythagorean(start_x, start_y, (pos % _xlength), y);
-                        //cout << "pythagorean: " << pythagorean(start_x, start_y, x, y) << endl;
-                        if ((y * _xlength + (pos % _xlength)) == 0)
-                            backwards_path[i + 1] = 0;
-                        else if (pythagorean(start_x, start_y, (pos % _xlength), y) <= closer)
-                        {
-                            /*
-                            cout << "pythagorean true: " << pythagorean(start_x, start_y, x, y) << endl;
-                            cout << "start_x: " << start_x << endl;
-                            cout << "start_y: " << start_y << endl;
-                            cout << "x: " << x << endl;
-                            cout << "y: " << y << endl;
-                            */
-                            closer = pythagorean(start_x, start_y, (pos % _xlength), y);
-                            backwards_path[i + 1] = (y * _xlength + (pos % _xlength));
-                        }
-                        old_path_value = _path[y * _xlength + (pos % _xlength)];
-                    }
-                }
-            }
-            else
-            {
-                for (int x = (pos % _xlength) - xstart; x < (pos % _xlength) + xfinish; x++)
-                {
-                    /*
-                    cout << endl;
-                    cout << "(y * _yheight + x) = " << (y * _yheight + x) << endl;
-                    cout << "_path: " << _path[y * _yheight + x] << endl;
-                    cout << "old_path_value: " << old_path_value << endl;
-                    cout << "closer: " << closer << endl;
-                    */
-                    if (_path[y * _xlength + x] <= old_path_value)
-                    {
-                        if ((_path[y * _xlength + x]) > -1)
-                        {
-                            if (closer == 0)
-                                closer = pythagorean(start_x, start_y, x, y);
-                            //cout << "pythagorean: " << pythagorean(start_x, start_y, x, y) << endl;
-                            if ((y * _xlength + x) == 0)
-                                backwards_path[i + 1] = 0;
-                            else if (pythagorean(start_x, start_y, x, y) <= closer)
-                            {
-                                /*
-                                cout << "pythagorean true: " << pythagorean(start_x, start_y, x, y) << endl;
-                                cout << "start_x: " << start_x << endl;
-                                cout << "start_y: " << start_y << endl;
-                                cout << "x: " << x << endl;
-                                cout << "y: " << y << endl;
-                                */
-                                closer = pythagorean(start_x, start_y, x, y);
-                                backwards_path[i + 1] = (y * _xlength + x);
-                            }
-                            old_path_value = _path[y * _xlength + x];
-                        }
-                    }
-                }
-            }
-        }
-        closer = 0; //closer_reset;
-    }
-    int backpathsize = backwards_path.size();
-    for (unsigned i = 0; i < backpathsize; i++)
-    {
-        _direct_path[i] = backwards_path.back();
-        backwards_path.pop_back();
-    }
-};
-
-void Path_finding::grid_create(random_device& r)
-{
-    int shift_data = 0; // For moving data to adjacent local areas
-    std::default_random_engine e1(r());
-    std::uniform_int_distribution<int> uniform_dist(0, _yheight * _xlength - 1);
-
-    for (int i = 0; i < (_yheight * _xlength); i++) // Makes the grid have its positions marked and ready for management
-    {
-        _grid[i] = i * 10;
-    }
-
-    for (unsigned i = 0; i < ((_yheight * _xlength) / 3); i++) // Places a 2 randomly into _grid
-    {
-        shift_data = uniform_dist(e1);
-        //cout << "Data point: " << shift_data << endl;
-        if (shift_data < -1)
-            i--;
-        else if (shift_data > _yheight* _xlength - 1)
-            i--;
-        else
-        {
-            if (_grid[shift_data] % 10 == 0) // Center
-                _grid[shift_data] += 2;
-            else if ((shift_data - 1) > 0 && _grid[shift_data - 1] % 10 == 0) // Axis 1a
-                _grid[shift_data - 1] += 2;
-            else if ((shift_data + 1) < (_yheight * _xlength) && _grid[shift_data + 1] % 10 == 0) // Axis 1b
-                _grid[shift_data + 1] += 2;
-            else if ((shift_data - _xlength) > 0 && _grid[shift_data - _xlength] % 10 == 0) // Axis 2a
-                _grid[shift_data - _xlength] += 2;
-            else if ((shift_data + _xlength) < (_yheight * _xlength) && _grid[shift_data + _xlength] % 10 == 0) // Axis 2b
-                _grid[shift_data + _xlength] += 2;
-            else
-            {
-                cout << "Placement cancel" << endl;
-                i--;
-            }
-        }
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////
-// Below is a copy of PathFinding.cpp (My second path finding program or PathFinding"V2")
-// It used NASM assembly for parts of it. 
-//////////////////////////////////////////////////////////////////////////////////////////
-/*Path Finding
-Nathan Damon
-11/21/2020
-This is the hpp file for the PathFinding Class.
-*/
-
-
-#include "PathFinding.h"
-
-#include <iomanip>
-using std::setw;
-
-void PathFinding::Algorithm()
+void PathFindingV3::algorithm()
 {
     SetStartinPathGrid(_StartPos),
         _alg_values.push_back(_StartPos);
@@ -607,7 +281,7 @@ void PathFinding::Algorithm()
     }
 }
 
-void PathFinding::Create_Path()
+void PathFindingV3::create_path()
 {
     _DirectPath.clear(); // Empty the path
     _DirectPath.push_back(_TargetPos); // Set the first position in the path to the start position
@@ -627,7 +301,7 @@ void PathFinding::Create_Path()
     PathIntGridReset(); // Resets the grid for reuse
 }
 
-vector<int> PathFinding::Path_Get()
+vector<int> PathFindingV3::path_get()
 {
     _PathEnd = false;
     if (IntegralGridAreaSumGet(_StartPos % Width, _StartPos / Width, _TargetPos % Width, _TargetPos / Width) == 0)
@@ -641,6 +315,647 @@ vector<int> PathFinding::Path_Get()
     Create_Path();
     return _DirectPath; // Return the calculated path
 }
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Below is a copy of Path Finding.cpp (My first path finding program or PathFinding"V1")
+//////////////////////////////////////////////////////////////////////////////////////////
+/*Path Finding
+Nathan Damon
+9/5/2020
+This program will find a path through a given 2d grid.
+*/
+
+
+//#include <iostream>
+//using std::cout;
+//using std::cin;
+//using std::endl;
+//#include <vector>
+//using std::vector;
+//#include <Windows.h>
+//#include <conio.h>
+//#include <random>
+//using std::random_device;
+//#include <string>
+//using std::string;
+//#include <iomanip>
+//using std::setw;
+//using std::right;
+//#include <sstream>
+//using std::istringstream;
+//#include <fstream>
+//using std::ofstream;
+//using std::ifstream;
+//using std::ios;
+////#include <map>
+////using std::map;
+////#include <utility>
+////using std::pair;
+//#include <ios>
+//using std::left;
+//#include <algorithm>
+//#include <iterator>
+//
+//using std::size_t;
+//
+//class Path_finding
+//{
+//public:
+//    Path_finding(int x, int y) :
+//        _xlength{ x },
+//        _yheight{ y },
+//        _grid(x* y, -1),
+//        /*_grid{
+//           0,   10,   20,   32,   42,   52,   60,   70,   80,   90,
+//         102,  110,  122,  132,  142,  150,  162,  170,  180,  190,
+//         200,  210,  220,  230,  240,  250,  260,  270,  280,  290,
+//         302,  310,  320,  332,  340,  352,  360,  370,  380,  390,
+//         400,  410,  420,  432,  442,  450,  460,  470,  480,  490,
+//         502,  510,  522,  532,  542,  552,  560,  570,  580,  592,
+//         602,  610,  620,  630,  642,  652,  662,  672,  682,  692,
+//         702,  710,  720,  732,  740,  750,  760,  772,  780,  790,
+//         800,  810,  820,  832,  840,  852,  860,  870,  880,  890,
+//         902,  912,  920,  930,  940,  950,  960,  972,  980,  990 },*/
+//        _path(x* y, -1), // flow grid
+//        _alg_values{}, // list of values in order of distance from start
+//        _direct_path(x* y, -1), // the direct path from start to finish
+//        _alg_values_location{ 0 }, // current position in agl_values
+//        _start{ 0 },
+//        _finish{ 99 },
+//        _datacount{ 0 },
+//        _itercount{ 1 },
+//        _pathend{ false },
+//        _backtrack{ false }
+//    {};
+//    void grid_visual(HANDLE& hConsole); // Visuals
+//    void pick_point(); // Pick start and finish values
+//    void algorithm(); // Produces a grid of values with _start as 0 expanding outward
+//    void create_path(); // Identifies the quickest path
+//    void grid_create(random_device& r); // Creates a grid with random obsticals
+//
+//    bool _pathend;
+//    bool _backtrack;
+//
+//    vector<int> _direct_path;
+//    int _xlength;// grid length not last value in x
+//    int _yheight;// grid height not last value in y
+//    vector<int> _grid;
+//    vector<int> _path;
+//
+//private:
+//    vector<int> _alg_values;
+//    int _start;
+//    int _finish;
+//    unsigned _alg_values_location;
+//    unsigned _datacount;
+//    int _itercount;
+//};
+//
+//// Makes it possible to color text
+//HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+//
+//int main()
+//{
+//    string select_str;
+//    int length = 0;
+//    int height = 0;
+//    int tempvalue = -1;
+//    cout << "Enter a length (0-100): ";
+//    while (true) // Gets the users x length
+//    {
+//        std::getline(cin, select_str);
+//        istringstream instream(select_str);
+//        instream >> tempvalue;
+//        if (instream)
+//            if (tempvalue > -1)
+//            {
+//                if (tempvalue < 101)
+//                    break;
+//                else
+//                    cout << "You need to enter a number 0-100: ";
+//            }
+//    };
+//    length = tempvalue;
+//
+//    tempvalue = -1;
+//    cout << "Enter a height (0-100): ";
+//    while (true) // Gets the users y height
+//    {
+//        std::getline(cin, select_str);
+//        istringstream instream(select_str);
+//        instream >> tempvalue;
+//        if (instream)
+//            if (tempvalue > -1)
+//            {
+//                if (tempvalue < 101)
+//                    break;
+//                else
+//                    cout << "You need to enter a number 0-100: ";
+//            }
+//    }
+//    height = tempvalue;
+//
+//    int end;
+//    random_device r;
+//
+//    Path_finding Test(length, height); // Takes an x and y respectively
+//    Test.grid_create(r);
+//    Test.grid_visual(hConsole);
+//    Test.pick_point();
+//    Test.grid_visual(hConsole);
+//    while (!Test._pathend)
+//    {
+//        //Sleep(600);
+//        Test.algorithm();
+//        if (Test._backtrack)
+//            break;
+//
+//        //cin >> end;
+//        //Test.grid_visual(hConsole);
+//    }
+//    Test.create_path();
+//    Test.grid_visual(hConsole);
+//
+//    //for (unsigned i = 0; i < 20; i++)
+//    //    cout << Test._direct_path[i] << endl;
+//
+//    cout << "Program end." << endl;
+//    cin >> end;
+//}
+//
+//void Path_finding::grid_visual(HANDLE& hConsole)
+//{
+//    auto color_text = [](int color, HANDLE& hConsole) // Color based on input
+//    {
+//        SetConsoleTextAttribute(hConsole, color);
+//    };
+//
+//    system("cls"); // refreshes the console screen.
+//
+//    for (unsigned i = 0; i < _yheight; i++)
+//    {
+//        for (unsigned k = 0; k < _xlength; k++)
+//        {
+//            if (_grid[i * _xlength + k] % 10 == 2)
+//            {
+//                color_text(15, hConsole); // White
+//                cout << "[]";
+//            }
+//            else if (_backtrack && (std::find(std::begin(_direct_path), std::end(_direct_path), (i * _xlength + k)) != std::end(_direct_path)))
+//            {
+//                color_text(14, hConsole); // Yellow
+//                cout << "[]";
+//            }
+//            else if (_path[i * _xlength + k] != -1)
+//            {
+//                if (!_backtrack)
+//                {
+//                    color_text(10, hConsole); // Bright green
+//                    cout << "[]";
+//                }
+//                else
+//                {
+//                    color_text(2, hConsole); // Dark green
+//                    cout << "[]";
+//                }
+//            }
+//            else
+//            {
+//                color_text(8, hConsole); // Dark gray
+//                cout << "[]";
+//            }
+//        }
+//        cout << endl;
+//    }
+//    color_text(7, hConsole); // Default white
+//
+//    for (unsigned i = 0; i < _yheight; i++)
+//    {
+//        for (unsigned k = 0; k < _xlength; k++)
+//        {
+//            cout << setw(3) << right << _path[i * _xlength + k] << "";
+//        }
+//        cout << endl;
+//    }
+//
+//}
+//
+//void Path_finding::pick_point()
+//{
+//    string select_str;
+//    int tempvalue = -1;
+//    cout << "Enter a finishing point (0-" << _yheight * _xlength - 1 << "): ";
+//    while (true) // Gets the users start position (finish and start swapped cause it looks better)
+//    {
+//        std::getline(cin, select_str);
+//        istringstream instream(select_str);
+//        instream >> tempvalue;
+//        if (instream)
+//            if (tempvalue > -1)
+//                if (tempvalue < _yheight * _xlength)
+//                {
+//                    if (_grid[tempvalue] % 10 != 2)
+//                        break;
+//                    else
+//                        cout << "That tile is unavailable. Pick a different one: ";
+//                }
+//                else
+//                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
+//    };
+//    _start = tempvalue;
+//    _path[_start] = 0;
+//    _alg_values.push_back(_start);
+//
+//    tempvalue = -1;
+//    cout << "Enter a starting point (0-" << _yheight * _xlength - 1 << "): ";
+//    while (true) // Gets the users finish position (finish and start swapped cause it looks better)
+//    {
+//        std::getline(cin, select_str);
+//        istringstream instream(select_str);
+//        instream >> tempvalue;
+//        if (instream)
+//            if (tempvalue > -1)
+//                if (tempvalue < _yheight * _xlength)
+//                {
+//                    if (_grid[tempvalue] % 10 != 2)
+//                    {
+//                        if (_finish != _start)
+//                            break;
+//                    }
+//                    else
+//                        cout << "That tile is unavailable. Pick a different one: ";
+//                }
+//                else
+//                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
+//    }
+//    _finish = tempvalue;
+//}
+//
+//void Path_finding::algorithm()
+//{
+//    int pos = -1;
+//    int ystart = 1; // Counting from one above pos
+//    int yfinish = 2; // Counting to one below pos 
+//    int xstart = 1; // Counting from one left of pos
+//    int xfinish = 2; // Counting to one right of pos
+//
+//    int count = _datacount;
+//    _datacount = 0;
+//
+//    for (int i = 0; i < count + 1; i++)
+//    {
+//        //cout << "_alg_values_location: " << _alg_values_location + i << endl;
+//        pos = _alg_values[_alg_values_location + i];
+//        //cout << "data: " << _alg_values.size() << endl;
+//        //cout << "Pos: " << pos << endl;
+//        if ((pos - _xlength) < 0)
+//            ystart = 0;
+//        else
+//            ystart = 1;
+//
+//        if ((pos + _xlength) > (_yheight * _xlength) - 1)
+//            yfinish = 1;
+//        else
+//            yfinish = 2;
+//
+//        if ((pos % _xlength) == 0)
+//            xstart = 0;
+//        else
+//            xstart = 1;
+//
+//        if ((pos % _xlength) == (_xlength - 1))
+//            xfinish = 1;
+//        else
+//            xfinish = 2;
+//
+//        for (int y = (pos / _xlength) - ystart; y < (pos / _xlength) + yfinish; y++)
+//        {
+//            if ((y == (pos / _xlength) - 1) || (y == (pos / _xlength) + 1))
+//            {
+//                if (_grid[y * _xlength + (pos % _xlength)] % 10 == 0)
+//                    if (_path[y * _xlength + (pos % _xlength)] == -1)
+//                    {
+//                        _datacount++;
+//                        //cout << "_datacount: " << _datacount << endl;
+//                        _path[y * _xlength + (pos % _xlength)] = _itercount;
+//                        _alg_values.push_back(y * _xlength + (pos % _xlength));
+//                        if ((y * _xlength + (pos % _xlength)) == _finish)
+//                        {
+//                            _backtrack = true;
+//                            break;
+//                        }
+//                    }
+//            }
+//            else
+//            {
+//                for (int x = (pos % _xlength) - xstart; x < (pos % _xlength) + xfinish; x++)
+//                {
+//                    if (_grid[y * _xlength + x] % 10 == 0)
+//                        if (_path[y * _xlength + x] == -1)
+//                        {
+//                            _datacount++;
+//                            //cout << "_datacount: " << _datacount << endl;
+//                            _path[y * _xlength + x] = _itercount;
+//                            _alg_values.push_back(y * _xlength + x);
+//                            if ((y * _xlength + x) == _finish)
+//                            {
+//                                _backtrack = true;
+//                                break;
+//                            }
+//                        }
+//                }
+//            }
+//            if (_backtrack)
+//                break;
+//        }
+//        //cout << endl;
+//        if (_backtrack)
+//            break;
+//    }
+//    //cout << endl;
+//    //cout << endl;
+//    if (_datacount == 0)
+//    {
+//        _pathend = true;
+//        cout << "Path end." << endl;
+//    }
+//    //cout << "_alg_values_location: " << _alg_values_location;
+//    _alg_values_location += count;//_alg_values_location += _datacount;  
+//    //cout << " -> " <<_alg_values_location << endl;
+//    //cout << "_itercount: " << _itercount << endl;
+//    _itercount++;
+//
+//}
+//
+//void Path_finding::create_path()
+//{
+//    int pos = -1;
+//    int ystart = 1; // Counting from one above pos
+//    int yfinish = 2; // Counting to one below pos 
+//    int xstart = 1; // Counting from one left of pos
+//    int xfinish = 2; // Counting to one right of pos
+//    vector<int> backwards_path(_itercount, (_yheight * _xlength - 1));
+//    int start_x = _start % _xlength;
+//    int start_y = _start / _xlength;
+//    int closer = 0; //((((_finish % _xlength) - start_x) * ((_finish % _xlength) - start_x)) + ((_finish / _xlength) - start_y) * ((_finish / _xlength) - start_y)); // a^2 + b^2
+//    //int closer_reset = closer;
+//    int old_path_value = _itercount + 10;
+//
+//    auto pythagorean = [](int x1, int y1, int x2, int y2) // pythagorean
+//    {
+//        return (((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1))); // a^2 + b^2
+//    };
+//    backwards_path[0] = (_finish);
+//    cout << backwards_path.size() << endl;
+//    cout << closer << endl;
+//    for (int i = 0; i < _itercount - 1; i++)
+//    {
+//
+//        pos = backwards_path[i];
+//        if ((pos - _xlength) < 0)
+//            ystart = 0;
+//        else
+//            ystart = 1;
+//
+//        if ((pos + _xlength) > (_xlength * _yheight) - 1)
+//            yfinish = 1;
+//        else
+//            yfinish = 2;
+//
+//        if ((pos % _xlength) == 0)
+//            xstart = 0;
+//        else
+//            xstart = 1;
+//
+//        if ((pos % _xlength) == _xlength - 1)
+//            xfinish = 1;
+//        else
+//            xfinish = 2;
+//
+//        for (int y = (pos / _xlength) - ystart; y < (pos / _xlength) + yfinish; y++)
+//        {
+//            if ((y == (pos / _xlength) - 1) || (y == (pos / _xlength) + 1))
+//            {
+//                if (_path[y * _xlength + (pos % _xlength)] <= old_path_value)
+//                {
+//                    if ((_path[y * _xlength + (pos % _xlength)]) > -1)
+//                    {
+//                        if (closer == 0)
+//                            closer = pythagorean(start_x, start_y, (pos % _xlength), y);
+//                        //cout << "pythagorean: " << pythagorean(start_x, start_y, x, y) << endl;
+//                        if ((y * _xlength + (pos % _xlength)) == 0)
+//                            backwards_path[i + 1] = 0;
+//                        else if (pythagorean(start_x, start_y, (pos % _xlength), y) <= closer)
+//                        {
+//                            /*
+//                            cout << "pythagorean true: " << pythagorean(start_x, start_y, x, y) << endl;
+//                            cout << "start_x: " << start_x << endl;
+//                            cout << "start_y: " << start_y << endl;
+//                            cout << "x: " << x << endl;
+//                            cout << "y: " << y << endl;
+//                            */
+//                            closer = pythagorean(start_x, start_y, (pos % _xlength), y);
+//                            backwards_path[i + 1] = (y * _xlength + (pos % _xlength));
+//                        }
+//                        old_path_value = _path[y * _xlength + (pos % _xlength)];
+//                    }
+//                }
+//            }
+//            else
+//            {
+//                for (int x = (pos % _xlength) - xstart; x < (pos % _xlength) + xfinish; x++)
+//                {
+//                    /*
+//                    cout << endl;
+//                    cout << "(y * _yheight + x) = " << (y * _yheight + x) << endl;
+//                    cout << "_path: " << _path[y * _yheight + x] << endl;
+//                    cout << "old_path_value: " << old_path_value << endl;
+//                    cout << "closer: " << closer << endl;
+//                    */
+//                    if (_path[y * _xlength + x] <= old_path_value)
+//                    {
+//                        if ((_path[y * _xlength + x]) > -1)
+//                        {
+//                            if (closer == 0)
+//                                closer = pythagorean(start_x, start_y, x, y);
+//                            //cout << "pythagorean: " << pythagorean(start_x, start_y, x, y) << endl;
+//                            if ((y * _xlength + x) == 0)
+//                                backwards_path[i + 1] = 0;
+//                            else if (pythagorean(start_x, start_y, x, y) <= closer)
+//                            {
+//                                /*
+//                                cout << "pythagorean true: " << pythagorean(start_x, start_y, x, y) << endl;
+//                                cout << "start_x: " << start_x << endl;
+//                                cout << "start_y: " << start_y << endl;
+//                                cout << "x: " << x << endl;
+//                                cout << "y: " << y << endl;
+//                                */
+//                                closer = pythagorean(start_x, start_y, x, y);
+//                                backwards_path[i + 1] = (y * _xlength + x);
+//                            }
+//                            old_path_value = _path[y * _xlength + x];
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        closer = 0; //closer_reset;
+//    }
+//    int backpathsize = backwards_path.size();
+//    for (unsigned i = 0; i < backpathsize; i++)
+//    {
+//        _direct_path[i] = backwards_path.back();
+//        backwards_path.pop_back();
+//    }
+//};
+//
+//void Path_finding::grid_create(random_device& r)
+//{
+//    int shift_data = 0; // For moving data to adjacent local areas
+//    std::default_random_engine e1(r());
+//    std::uniform_int_distribution<int> uniform_dist(0, _yheight * _xlength - 1);
+//
+//    for (int i = 0; i < (_yheight * _xlength); i++) // Makes the grid have its positions marked and ready for management
+//    {
+//        _grid[i] = i * 10;
+//    }
+//
+//    for (unsigned i = 0; i < ((_yheight * _xlength) / 3); i++) // Places a 2 randomly into _grid
+//    {
+//        shift_data = uniform_dist(e1);
+//        //cout << "Data point: " << shift_data << endl;
+//        if (shift_data < -1)
+//            i--;
+//        else if (shift_data > _yheight* _xlength - 1)
+//            i--;
+//        else
+//        {
+//            if (_grid[shift_data] % 10 == 0) // Center
+//                _grid[shift_data] += 2;
+//            else if ((shift_data - 1) > 0 && _grid[shift_data - 1] % 10 == 0) // Axis 1a
+//                _grid[shift_data - 1] += 2;
+//            else if ((shift_data + 1) < (_yheight * _xlength) && _grid[shift_data + 1] % 10 == 0) // Axis 1b
+//                _grid[shift_data + 1] += 2;
+//            else if ((shift_data - _xlength) > 0 && _grid[shift_data - _xlength] % 10 == 0) // Axis 2a
+//                _grid[shift_data - _xlength] += 2;
+//            else if ((shift_data + _xlength) < (_yheight * _xlength) && _grid[shift_data + _xlength] % 10 == 0) // Axis 2b
+//                _grid[shift_data + _xlength] += 2;
+//            else
+//            {
+//                cout << "Placement cancel" << endl;
+//                i--;
+//            }
+//        }
+//    }
+//}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Below is a copy of PathFinding.cpp (My second path finding program or PathFinding"V2")
+// It used NASM assembly for parts of it. 
+//////////////////////////////////////////////////////////////////////////////////////////
+/*Path Finding
+Nathan Damon
+11/21/2020
+This is the hpp file for the PathFinding Class.
+*/
+
+
+//#include "PathFinding.h"
+//
+//#include <iomanip>
+//using std::setw;
+//
+//void PathFinding::Algorithm()
+//{
+//    SetStartinPathGrid(_StartPos),
+//        _alg_values.push_back(_StartPos);
+//    while (!_PathEnd && !_CreatPath)
+//    {
+//        int Count = _DataCount;
+//        _DataCount = 0;
+//        for (int Direction = 0; Direction < 4; Direction++) // Check each North, West, East, and South
+//        {
+//            for (unsigned int i = 0; i < Count + 1; i++)
+//            {
+//                int RET = NeighborCheck(_alg_values[_alg_values_location + i], // Gets the neighboring cell in the given direction
+//                    Direction, _TargetPos, _IterCount);
+//                if (RET == 1)
+//                {
+//                    int temp = NeighborRetrieve(_alg_values[_alg_values_location + i], Direction); // Gets the neighbor after confirmed accessable
+//                    if (temp < 0) // Runs the following code in case of error to aid in finding the reason for the error
+//                    {
+//                        cout << "ERROR in NeighborRetrieve, PathFinding.cpp: Value returned below 0." << endl;
+//
+//                        cout << "Position: " << _alg_values[_alg_values_location + i] << endl;
+//                        for (int y = 0; y < 64; y++)
+//                        {
+//                            for (int x = 0; x < 64; x++)
+//                            {
+//                                // Set specified value to its opposite
+//                                cout << setw(3) << PathIntGridGet(x, y) << " "; // (rcx, rdx)
+//                            }
+//                            cout << endl;
+//                        }
+//                    }
+//
+//                    _alg_values.push_back(temp);
+//                    _DataCount++; // Increase the count of data
+//                }
+//                if (RET == 2) // Finish found
+//                {
+//                    _CreatPath = true;
+//                    break;
+//                }
+//            }
+//            if (_CreatPath)
+//                break;
+//        }
+//        if (_DataCount == 0) // If there is no new data, then everything that can be moved to has been checked
+//        {
+//            _PathEnd = true;
+//        }
+//        _alg_values_location += Count; // Increase the starting point for where the next set of data points is read from
+//        _IterCount++;
+//    }
+//}
+//
+//void PathFinding::Create_Path()
+//{
+//    _DirectPath.clear(); // Empty the path
+//    _DirectPath.push_back(_TargetPos); // Set the first position in the path to the start position
+//    int NewPos = 0;
+//
+//    int prevent_overrun = 0;
+//    while (NewPos != _StartPos)
+//    {
+//        NewPos = NeighborCheckPath(_DirectPath.back()); // Finds the best direction to move in and returns it
+//        if (NewPos != _DirectPath.back())
+//            _DirectPath.push_back(NewPos);
+//        prevent_overrun++;
+//        if (prevent_overrun > _IterCount)
+//            break;
+//    }
+//
+//    PathIntGridReset(); // Resets the grid for reuse
+//}
+//
+//vector<int> PathFinding::Path_Get()
+//{
+//    _PathEnd = false;
+//    if (IntegralGridAreaSumGet(_StartPos % Width, _StartPos / Width, _TargetPos % Width, _TargetPos / Width) == 0)
+//        return { _TargetPos };
+//    Algorithm();
+//    if (_PathEnd)
+//    {
+//        PathIntGridReset(); // Because the original reset was in Create_Path() we need to call it before leaving in the case that we don't get to Create_Path()
+//        return { -1 };
+//    }
+//    Create_Path();
+//    return _DirectPath; // Return the calculated path
+//}
 
 // The assembly language below
 /*
