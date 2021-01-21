@@ -31,13 +31,13 @@ int main(int argc, const char** argv)
 // Converts from degrees Fahrenheit to degrees Celsius (stod)
 double cpp_ftoc(const char* str)
 {
-	double celcius = (std::stod(str) - 32) * (5/9);
+	double celcius = (std::stod(str) - 32.0) * (5.0/9.0);
 	return celcius;
 }
 
 // Converts from degrees Celsius to degrees Fahrenheit (strtod)
 double c_ctof(const char* str)
 {
-	double fahrenheit = strtod(str, NULL) * (9/5) + 32;
+	double fahrenheit = strtod(str, NULL) * (9.0/5.0) + 32.0;
 	return fahrenheit;
 }
