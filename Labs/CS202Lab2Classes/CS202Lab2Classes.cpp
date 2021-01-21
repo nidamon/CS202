@@ -10,7 +10,7 @@ This the second lab of CS 202 that will make use of classes
 void passObjectV(Lab2 Lab); // Pass by value
 void passObjectR(Lab2& Lab); // Pass by reference
 void passObjectRC(const Lab2& Lab); // Pass by reference to const
-Lab2 returnByValue(Lab2& Lab); // Return an object by value
+Lab2 returnByValue(); // Return an object by value
 
 int main()
 {
@@ -34,22 +34,25 @@ int main()
 
 	cout << endl;
 
-	L = returnByValue(K);
+	L = returnByValue();
 
 	cout << endl;
 
-	vector<Lab2> labVector(5);
+	vector<Lab2> labVector;
+	labVector.reserve(5);
 
-	/*for (int i = 0; i < 5; i++)
+	Lab2 m;
+	for (int i = 0; i < 5; i++)
 	{
-		Lab2 m;
 		labVector.push_back(m);
-	}*/
+	}
 
 	cout << endl;
 
 	cout << "labVector's size: " << labVector.size() << endl;
 
+	int end;
+	std::cin >> end;
 	return 0;
 }
 
@@ -72,8 +75,9 @@ void passObjectRC(const Lab2& Lab)
 }
 
 // Return an object by value
-Lab2 returnByValue(Lab2& Lab)
+Lab2 returnByValue()
 {
+	Lab2 Lab;
 	cout << "Return By Value" << endl;
 	return Lab;
 }

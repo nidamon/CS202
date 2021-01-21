@@ -7,6 +7,7 @@ This program will convert temperature from degrees Fahrenheit to degrees Celsius
 
 #include <string>
 using std::string;
+#include <iostream>
 
 double cpp_ftoc(const char* str);
 double c_ctof(const char* str);
@@ -15,12 +16,14 @@ int main(int argc, const char** argv)
 {
 	if (argc >= 2 && argv[1] == string("--ftoc"))
 	{
-		cpp_ftoc(argv[2]);
+		double c = cpp_ftoc(argv[2]);
+		printf("In degrees Celcius %f.\n", c);
 	}
 
 	if (argc >= 2 && argv[1] == string("--ctof"))
 	{
-		c_ctof(argv[2]);
+		double f = c_ctof(argv[2]);
+		printf("In degrees Fahrenheit %f.\n", f);
 	}
 }
 
