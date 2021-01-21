@@ -30,12 +30,13 @@ int main(int argc, const char* argv[])
 				double c = cpp_ftoc(argv[2]);
 				printf("In degrees Celcius %f.\n", c);
 			}
-
-			if (argc >= 2 && argv[1] == string("--ctof"))
+			else if (argc >= 2 && argv[1] == string("--ctof"))
 			{
 				double f = c_ctof(argv[2]);
 				printf("In degrees Fahrenheit %f.\n", f);
 			}
+			else
+				printf("Must enter either --ftoc or --ctof.");
 		}
 		else
 			printf("Must input a numerical value.");
