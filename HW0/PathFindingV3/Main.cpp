@@ -31,8 +31,8 @@ int main()
 
     grid_create(r, width, height, vgrid, percentFill); // Make the 2d grid
 
-    vector<vector<int>> vpath(width, vector<int>(height, -1));
-    integralGridCreate(vgrid, vpath);
+    vector<vector<int>> vIntegral(width, vector<int>(height, 0));
+    integralGridCreate(vgrid, vIntegral);
 
     cout << "Enter a start point: " << endl;
     pair<int, int> start = getStartFinishInput(width, height, vgrid);

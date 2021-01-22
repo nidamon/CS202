@@ -82,7 +82,10 @@ private:
 void grid_create(random_device& r, const int width, const int height, vector<vector<bool>>& vgrid, float percentFill);
 
 // Creates an integral image of the grid for quick area checking
-void integralGridCreate(const vector<vector<bool>>& vgrid, vector<vector<int>>& vpath);
+void integralGridCreate(const vector<vector<bool>>& vgrid, vector<vector<int>>& vIntegral);
+
+// Returns the sum of the specified area
+int integralGridAreaSumGet(const int startx, const int starty, const int targetx, const int targety, const vector<vector<int>>& vIntegral);
 
 // Gets input from the user
 int getDimensionsInput();

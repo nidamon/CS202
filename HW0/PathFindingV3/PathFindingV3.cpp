@@ -184,9 +184,52 @@ void PathFindingV3::create_path()
 }
 
 
-int IntegralGridAreaSumGet(const int startx, const int starty, const int targetx, const int targety)
+int integralGridAreaSumGet(const int startx, const int starty, const int targetx, const int targety, const vector<vector<int>>& vIntegral)
 {
+    int leftX = startx;
+    int rightX = targetx;
+    int upperY = starty;
+    int lowerY = targety;
 
+    if (startx > targetx) // Correct the positioning of the sides of the area to sum
+    {
+        leftX = targetx;
+        rightX = startx;
+    }
+
+    if (starty > targety)
+    {
+        upperY = targety;
+        lowerY = starty;
+    }
+
+    int upperLeft = 0;
+    int upperRight = 0;
+    int lowerLeft = 0;
+
+    if (leftX == 0 && upperY == 0)
+        upperLeft = 0;
+    else
+    {
+        if (upperY == 0)
+            upperLeft = vIntegral[leftX - 1][upperY]; // Left of corner
+        else if (leftX == 0)
+            upperLeft = vIntegral[leftX][upperY - 1]; // Above corner
+    }
+
+    if (upperY == 0)
+        upperRight = 0;
+    else
+        upperRight = vIntegral[rightX][upperY - 1]; // If the sum 1 up is available
+
+
+    if (leftX == 0)
+        lowerLeft = 0;
+    else
+        lowerLeft = vIntegral[leftX - 1][lowerY]; // If the sum 1 over is available
+
+
+    return (vIntegral[rightX][lowerY] - lowerLeft - upperRight + upperLeft); // Calculates the sum here
 }
 
 // Creates a grid with random obsticals
@@ -219,11 +262,41 @@ void grid_create(random_device& r, const int width, const int height, vector<vec
 }
 
 // Creates an integral image of the grid for quick area checking
-void integralGridCreate(const vector<vector<bool>>& vgrid, vector<vector<int>>& vpath)
+void integralGridCreate(const vector<vector<bool>>& vgrid, vector<vector<int>>& vIntegral)
 {
+    for (int y = 0; y < vgrid.size(); y++)
+    {
+        for (int x = 0; x < vgrid[y].size(); x++)
+        {
+            if (vgrid[x][y]) // True or false
+                vIntegral[x][y] = 1;
 
+            if (x == 0 && y == 0)
+                continue;
+            else if (x > 0 && y == 0)
+            {
+                vIntegral[x][y] += vIntegral[x - 1][y]; // The sum of the row to the left
+                continue;
+            }
+            else if (x == 0 && y > 0)
+            {
+                vIntegral[x][y] += vIntegral[x][y - 1]; // The sum of the column above
+                continue;
+            }
+            else if (x > 0 && y > 0)
+            {
+                vIntegral[x][y] += vIntegral[x][y - 1] + vIntegral[x - 1][y] - vIntegral[x - 1][y - 1]; // The sum of those to the left and up
+                continue;
+            }
+            else
+            {
+                int waiting;
+                cout << "Something unexpected happened when summing up the integral image. Type something to continue" << endl;
+                cin >> waiting;
+            }
+        }
+    }
 }
-
 
 // Gets input from the user
 int getDimensionsInput()
