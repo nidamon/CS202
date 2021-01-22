@@ -33,7 +33,7 @@ public:
 
     void grid_create(random_device& r); // Creates a grid with random obsticals
     void grid_visual(HANDLE& hConsole); // Visuals
-    void pick_point(); // Pick start and finish values
+    //void pick_point(); // Pick start and finish values
     void algorithm(); // Produces a grid of values with _start as 0 expanding outward
     void create_path(); // Identifies the quickest path
     vector<int> path_get(); // Runs the path code and returns the path to follow as a vector
@@ -60,7 +60,7 @@ private:
 int getDimensionsInput();
 
 // Gets input from the user
-pair<int, int> getStartFinishInput();
+pair<int, int> getStartFinishInput(const int width, const int height, const vector<vector<int>>& vgrid);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Below is a copy of PathFinding.h (My second path finding program or PathFinding"V2")

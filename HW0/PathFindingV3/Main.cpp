@@ -18,12 +18,27 @@ int main()
     cout << "Enter a height (0-100): ";
     int height = getDimensionsInput();
 
-    pair<int, int> start = getStartFinishInput();
     random_device r;
+    vector<vector<int>> vgrid(width * height); // A grid of two vectors.
 
 
 
-    PathFindingV3 Test(width, height); // Takes an x and y respectively
+
+    cout << "Enter a start point: " << endl;
+    pair<int, int> start = getStartFinishInput(width, height, vgrid);
+
+    pair<int, int> finish(-1, -1);
+    while (true) // Handles the case that the start and finish is the same tile.
+    {
+        cout << "Enter an end point: " << endl;
+        finish = getStartFinishInput(width, height, vgrid);
+        if (finish == start)
+            cout << "That tile is unavailable as it is the start point. Pick a different one.";
+        else
+            break;
+    }
+
+    PathFindingV3 Test(width, height, start.first, start.second, finish.first, finish.second); // Takes an x and y respectively
 
 
 

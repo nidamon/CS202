@@ -124,56 +124,56 @@ void PathFindingV3::grid_visual(HANDLE& hConsole)
 }
 
 // Pick start and finish values
-void PathFindingV3::pick_point()
-{
-    string select_str;
-    int tempvalue = -1;
-    cout << "Enter a finishing point (0-" << _yheight * _xlength - 1 << "): ";
-    while (true) // Gets the users start position (finish and start swapped cause it looks better)
-    {
-        std::getline(cin, select_str);
-        istringstream instream(select_str);
-        instream >> tempvalue;
-        if (instream)
-            if (tempvalue > -1)
-                if (tempvalue < _yheight * _xlength)
-                {
-                    if (_grid[tempvalue] % 10 != 2)
-                        break;
-                    else
-                        cout << "That tile is unavailable. Pick a different one: ";
-                }
-                else
-                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
-    };
-    _start = tempvalue;
-    _path[_start] = 0;
-    _alg_values.push_back(_start);
-
-    tempvalue = -1;
-    cout << "Enter a starting point (0-" << _yheight * _xlength - 1 << "): ";
-    while (true) // Gets the users finish position (finish and start swapped cause it looks better)
-    {
-        std::getline(cin, select_str);
-        istringstream instream(select_str);
-        instream >> tempvalue;
-        if (instream)
-            if (tempvalue > -1)
-                if (tempvalue < _yheight * _xlength)
-                {
-                    if (_grid[tempvalue] % 10 != 2)
-                    {
-                        if (_finish != _start)
-                            break;
-                    }
-                    else
-                        cout << "That tile is unavailable. Pick a different one: ";
-                }
-                else
-                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
-    }
-    _finish = tempvalue;
-}
+//void PathFindingV3::pick_point()
+//{
+//    string select_str;
+//    int tempvalue = -1;
+//    cout << "Enter a finishing point (0-" << _yheight * _xlength - 1 << "): ";
+//    while (true) // Gets the users start position (finish and start swapped cause it looks better)
+//    {
+//        std::getline(cin, select_str);
+//        istringstream instream(select_str);
+//        instream >> tempvalue;
+//        if (instream)
+//            if (tempvalue > -1)
+//                if (tempvalue < _yheight * _xlength)
+//                {
+//                    if (_grid[tempvalue] % 10 != 2)
+//                        break;
+//                    else
+//                        cout << "That tile is unavailable. Pick a different one: ";
+//                }
+//                else
+//                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
+//    };
+//    _start = tempvalue;
+//    _path[_start] = 0;
+//    _alg_values.push_back(_start);
+//
+//    tempvalue = -1;
+//    cout << "Enter a starting point (0-" << _yheight * _xlength - 1 << "): ";
+//    while (true) // Gets the users finish position (finish and start swapped cause it looks better)
+//    {
+//        std::getline(cin, select_str);
+//        istringstream instream(select_str);
+//        instream >> tempvalue;
+//        if (instream)
+//            if (tempvalue > -1)
+//                if (tempvalue < _yheight * _xlength)
+//                {
+//                    if (_grid[tempvalue] % 10 != 2)
+//                    {
+//                        if (_finish != _start)
+//                            break;
+//                    }
+//                    else
+//                        cout << "That tile is unavailable. Pick a different one: ";
+//                }
+//                else
+//                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
+//    }
+//    _finish = tempvalue;
+//}
 
 // Produces a grid of values with _start as 0 expanding outward
 void PathFindingV3::algorithm()
@@ -290,9 +290,72 @@ int getDimensionsInput()
 }
 
 // Gets input from the user
-pair<int, int> getStartFinishInput()
+pair<int, int> getStartFinishInput(const int width, const int height, const vector<vector<int>>& vgrid)
 {
+    string select_str;
+    pair<int, int> tempValuesXY(-1, -1);
 
+    while (true) // Gets the users start position (finish and start swapped cause it looks better)
+    {
+        cout << "x = ";
+        std::getline(cin, select_str); // Get x
+        istringstream instream(select_str);
+        instream >> tempValuesXY.first;
+
+        if (instream)
+            if (tempValuesXY.first > -1)
+                if (tempValuesXY.first < width)
+                {
+                    cout << endl; // Get y
+                    cout << "y = ";
+                    std::getline(cin, select_str);
+                    istringstream instream(select_str);
+                    instream >> tempValuesXY.second;
+
+                    if (instream)
+                        if (tempValuesXY.second > -1)
+                            if (tempValuesXY.second < height)
+                            {
+                                if (vgrid[tempValuesXY.first][tempValuesXY.second] != 1) // The tile is not solid
+                                    break;
+                                else
+                                    cout << "That tile is unavailable. Pick a different one: ";
+                            }
+                            else
+                                cout << "You need to enter a number 0-" << height - 1 << endl;
+                }
+                else
+                    cout << "You need to enter a number 0-" << width - 1 << endl;
+    }
+
+    return tempValuesXY;
+
+    //_start = tempvalue;
+    //_path[_start] = 0;
+    //_alg_values.push_back(_start);
+    //tempvalue = -1;
+    //cout << "Enter a starting point (0-" << width * height - 1 << "): ";
+    //while (true) // Gets the users finish position (finish and start swapped cause it looks better)
+    //{
+    //    std::getline(cin, select_str);
+    //    istringstream instream(select_str);
+    //    instream >> tempvalue;
+    //    if (instream)
+    //        if (tempvalue > -1)
+    //            if (tempvalue < width * height)
+    //            {
+    //                if (_grid[tempvalue] % 10 != 2)
+    //                {
+    //                    if (_finish != _start)
+    //                        break;
+    //                }
+    //                else
+    //                    cout << "That tile is unavailable. Pick a different one: ";
+    //            }
+    //            else
+    //                cout << "You need to enter a number 0-" << width * height - 1 << ": ";
+    //}
+    //_finish = tempvalue;
 }
 
 
