@@ -8,62 +8,24 @@ This is the cpp file for the PathFindingV3 Class.
 #include "PathFindingV3.h"
 
 // This is the constructor for the PathFinding class
-PathFindingV3::PathFindingV3(int width, int height, int startx, int starty, int targetx, int targety) :
+PathFindingV3::PathFindingV3(const int width, const int height, const int startx, const int starty, const int targetx, const int targety, const vector<vector<bool>> vgrid) :
     _algValues{}, // list of values in order of distance from start
     _algValuesLocation{ 0 }, // current position in agl_values
     _dataCount{ 0 },
     _iterCount{ 1 },
     _pathEnd{ false },
     _creatPath{ false },
-    _startPos{ startx + starty * width },
-    _targetPos{ targetx + targety * width },
+    _startPos{ startx, starty },
+    _targetPos{ targetx, targety },
     _width{ width },
     _height{ height },
-    _grid(width* height, -1),
-    _path(width* height, -1) // flow grid
+    //_grid(width* height, -1),
+
+    _vpath(width, vector<int>(height, -1)) // flow grid
 //        _backtrack{ false }
 {};
 
-// Creates a grid with random obsticals
-void PathFindingV3::grid_create(random_device& r)
-{
-    int shift_data = 0; // For moving data to adjacent local areas
-    std::default_random_engine e1(r());
-    std::uniform_int_distribution<int> uniform_dist(0, _height * _width - 1);
 
-    for (int i = 0; i < (_height * _width); i++) // Makes the grid have its positions marked and ready for management
-    {
-        _grid[i] = i * 10;
-    }
-
-    for (unsigned i = 0; i < ((_height * _width) / 3); i++) // Places a 2 randomly into _grid
-    {
-        shift_data = uniform_dist(e1);
-        //cout << "Data point: " << shift_data << endl;
-        if (shift_data < -1)
-            i--;
-        else if (shift_data > _height* _width - 1)
-            i--;
-        else
-        {
-            if (_grid[shift_data] % 10 == 0) // Center
-                _grid[shift_data] += 2;
-            else if ((shift_data - 1) > 0 && _grid[shift_data - 1] % 10 == 0) // Axis 1a
-                _grid[shift_data - 1] += 2;
-            else if ((shift_data + 1) < (_height * _width) && _grid[shift_data + 1] % 10 == 0) // Axis 1b
-                _grid[shift_data + 1] += 2;
-            else if ((shift_data - _width) > 0 && _grid[shift_data - _width] % 10 == 0) // Axis 2a
-                _grid[shift_data - _width] += 2;
-            else if ((shift_data + _width) < (_height * _width) && _grid[shift_data + _width] % 10 == 0) // Axis 2b
-                _grid[shift_data + _width] += 2;
-            else
-            {
-                cout << "Placement cancel" << endl;
-                i--;
-            }
-        }
-    }
-}
 
 // Visuals
 void PathFindingV3::grid_visual(HANDLE& hConsole)
@@ -122,58 +84,6 @@ void PathFindingV3::grid_visual(HANDLE& hConsole)
     }
 
 }
-
-// Pick start and finish values
-//void PathFindingV3::pick_point()
-//{
-//    string select_str;
-//    int tempvalue = -1;
-//    cout << "Enter a finishing point (0-" << _yheight * _xlength - 1 << "): ";
-//    while (true) // Gets the users start position (finish and start swapped cause it looks better)
-//    {
-//        std::getline(cin, select_str);
-//        istringstream instream(select_str);
-//        instream >> tempvalue;
-//        if (instream)
-//            if (tempvalue > -1)
-//                if (tempvalue < _yheight * _xlength)
-//                {
-//                    if (_grid[tempvalue] % 10 != 2)
-//                        break;
-//                    else
-//                        cout << "That tile is unavailable. Pick a different one: ";
-//                }
-//                else
-//                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
-//    };
-//    _start = tempvalue;
-//    _path[_start] = 0;
-//    _alg_values.push_back(_start);
-//
-//    tempvalue = -1;
-//    cout << "Enter a starting point (0-" << _yheight * _xlength - 1 << "): ";
-//    while (true) // Gets the users finish position (finish and start swapped cause it looks better)
-//    {
-//        std::getline(cin, select_str);
-//        istringstream instream(select_str);
-//        instream >> tempvalue;
-//        if (instream)
-//            if (tempvalue > -1)
-//                if (tempvalue < _yheight * _xlength)
-//                {
-//                    if (_grid[tempvalue] % 10 != 2)
-//                    {
-//                        if (_finish != _start)
-//                            break;
-//                    }
-//                    else
-//                        cout << "That tile is unavailable. Pick a different one: ";
-//                }
-//                else
-//                    cout << "You need to enter a number 0-" << _yheight * _xlength - 1 << ": ";
-//    }
-//    _finish = tempvalue;
-//}
 
 // Produces a grid of values with _start as 0 expanding outward
 void PathFindingV3::algorithm()
@@ -265,6 +175,37 @@ vector<int> PathFindingV3::path_get()
     }
     Create_Path();
     return _DirectPath; // Return the calculated path
+}
+
+
+
+// Creates a grid with random obsticals
+void grid_create(random_device& r, const int width, const int height, vector<vector<bool>>& vgrid, float percentFill)
+{
+    int dataPoint = 0; // For moving data to adjacent local areas
+    std::default_random_engine e1(r());
+    std::uniform_int_distribution<int> uniform_dist(0, width * height - 1);
+
+    if (percentFill < 0.01f) // Prevent percentFill from getting too low or too high
+        percentFill = 0.01f;
+    if (percentFill > 0.7f)
+        percentFill = 0.7f;
+
+    for (unsigned i = 0; i < unsigned int((float)(width * height)* percentFill); i++) // Places a 2 randomly into _grid
+    {
+        dataPoint = uniform_dist(e1);
+        if (dataPoint < -1)
+            i--;
+        else if (dataPoint > width* height - 1)
+            i--;
+        else
+        {
+            if (vgrid[dataPoint % width][dataPoint / width] == false) // Confirm available tile for solidifying
+                vgrid[dataPoint % width][dataPoint / width] = true;
+            else
+                i--;
+        }
+    }
 }
 
 // Gets input from the user

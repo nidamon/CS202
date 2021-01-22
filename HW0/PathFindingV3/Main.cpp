@@ -19,8 +19,17 @@ int main()
     int height = getDimensionsInput();
 
     random_device r;
-    vector<vector<int>> vgrid(width * height); // A grid of two vectors.
+    vector<vector<bool>> vgrid(width, vector<bool>(height, false)); // A grid of two vectors.
 
+    cout << "What percentage of the grid do you want to fill (1-70): " << endl;
+    float percentFill = (float)getDimensionsInput() / 100;
+    if (percentFill > 0.7f)
+    {
+        percentFill = 0.7f;
+        cout << "The percent fill has been changed to 70%" << endl;
+    }
+
+    grid_create(r, width, height, vgrid, percentFill);
 
 
 
@@ -38,11 +47,11 @@ int main()
             break;
     }
 
-    PathFindingV3 Test(width, height, start.first, start.second, finish.first, finish.second); // Takes an x and y respectively
+    PathFindingV3 Test(width, height, start.first, start.second, finish.first, finish.second, vgrid); // Takes an x and y respectively
 
 
 
-    Test.grid_create(r);
+    //Test.grid_create(r);
     Test.grid_visual(hConsole);
     //Test.pick_point();
     Test.grid_visual(hConsole);

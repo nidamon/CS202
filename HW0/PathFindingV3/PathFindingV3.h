@@ -29,9 +29,9 @@ class PathFindingV3
 {
 public:
     // This is the constructor for the PathFinding class
-    PathFindingV3(int width, int height, int startx, int starty, int targetx, int targety);
+    PathFindingV3(const int width, const int height, const int startx, const int starty, const int targetx, const int targety, const vector<vector<bool>> vgrid);
 
-    void grid_create(random_device& r); // Creates a grid with random obsticals
+    
     void grid_visual(HANDLE& hConsole); // Visuals
     //void pick_point(); // Pick start and finish values
     void algorithm(); // Produces a grid of values with _start as 0 expanding outward
@@ -43,24 +43,28 @@ public:
     bool _creatPath;
 
 private:
-    vector<int> _grid;
-    vector<int> _path;
+    //vector<int> _grid;
+
+    vector<vector<int>> _vpath;
     vector<int> _algValues;
     unsigned _algValuesLocation;
     unsigned _dataCount;
     int _width;
     int _height;
     int _iterCount;
-    int _targetPos;
-    int _startPos;
+    pair<int, int> _targetPos;
+    pair<int, int> _startPos;
     //bool _backTrack;
 };
+
+// Creates a grid with random obsticals
+void grid_create(random_device& r, const int width, const int height, vector<vector<bool>>& vgrid, float percentFill);
 
 // Gets input from the user
 int getDimensionsInput();
 
 // Gets input from the user
-pair<int, int> getStartFinishInput(const int width, const int height, const vector<vector<int>>& vgrid);
+pair<int, int> getStartFinishInput(const int width, const int height, const vector<vector<bool>>& vgrid);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Below is a copy of PathFinding.h (My second path finding program or PathFinding"V2")
