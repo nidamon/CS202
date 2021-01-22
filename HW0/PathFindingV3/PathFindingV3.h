@@ -1,7 +1,7 @@
 /*PathFindingV3.h
 Nathan Damon
 1/20/2021
-This is the hpp file for the PathFinding Class.
+This is the hpp file for the PathFindingV3 Class.
 */
 
 #include <iostream>
@@ -17,27 +17,19 @@ using std::random_device;
 #include <sstream>
 using std::istringstream;
 #include <Windows.h>
+//#include <fstream>
+#include <string>
+using std::string;
+#include <utility>
+using std::pair;
 
 using std::size_t;
 
 class PathFindingV3
 {
 public:
-    PathFindingV3(int width, int height, int startx, int starty, int targetx, int targety) :
-        _algValues{}, // list of values in order of distance from start
-        _algValuesLocation{ 0 }, // current position in agl_values
-        _dataCount{ 0 },
-        _iterCount{ 1 },
-        _pathEnd{ false },
-        _creatPath{ false },
-        _startPos{ startx + starty * width },
-        _targetPos{ targetx + targety * width },
-        _width{ width },
-        _height{ height },
-        _grid(width* height, -1),
-        _path(width* height, -1) // flow grid
-//        _backtrack{ false }
-    {};
+    // This is the constructor for the PathFinding class
+    PathFindingV3(int width, int height, int startx, int starty, int targetx, int targety);
 
     void grid_create(random_device& r); // Creates a grid with random obsticals
     void grid_visual(HANDLE& hConsole); // Visuals
@@ -64,6 +56,11 @@ private:
     //bool _backTrack;
 };
 
+// Gets input from the user
+int getDimensionsInput();
+
+// Gets input from the user
+pair<int, int> getStartFinishInput();
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Below is a copy of PathFinding.h (My second path finding program or PathFinding"V2")

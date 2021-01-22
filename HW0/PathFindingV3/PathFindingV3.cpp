@@ -1,84 +1,30 @@
 /*PathFindingV3.cpp
 Nathan Damon
 1/20/2021
-This is the cpp file for the PathFinding Class.
+This is the cpp file for the PathFindingV3 Class.
 */
 
 
 #include "PathFindingV3.h"
 
-// Makes it possible to color text
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+// This is the constructor for the PathFinding class
+PathFindingV3::PathFindingV3(int width, int height, int startx, int starty, int targetx, int targety) :
+    _algValues{}, // list of values in order of distance from start
+    _algValuesLocation{ 0 }, // current position in agl_values
+    _dataCount{ 0 },
+    _iterCount{ 1 },
+    _pathEnd{ false },
+    _creatPath{ false },
+    _startPos{ startx + starty * width },
+    _targetPos{ targetx + targety * width },
+    _width{ width },
+    _height{ height },
+    _grid(width* height, -1),
+    _path(width* height, -1) // flow grid
+//        _backtrack{ false }
+{};
 
-int main()
-{
-    string select_str;
-    int length = 0;
-    int height = 0;
-    int tempvalue = -1;
-    cout << "Enter a length (0-100): ";
-    while (true) // Gets the users x length
-    {
-        std::getline(cin, select_str);
-        istringstream instream(select_str);
-        instream >> tempvalue;
-        if (instream)
-            if (tempvalue > -1)
-            {
-                if (tempvalue < 101)
-                    break;
-                else
-                    cout << "You need to enter a number 0-100: ";
-            }
-    };
-    length = tempvalue;
-
-    tempvalue = -1;
-    cout << "Enter a height (0-100): ";
-    while (true) // Gets the users y height
-    {
-        std::getline(cin, select_str);
-        istringstream instream(select_str);
-        instream >> tempvalue;
-        if (instream)
-            if (tempvalue > -1)
-            {
-                if (tempvalue < 101)
-                    break;
-                else
-                    cout << "You need to enter a number 0-100: ";
-            }
-    }
-    height = tempvalue;
-
-    int end;
-    random_device r;
-
-    Path_finding Test(length, height); // Takes an x and y respectively
-    Test.grid_create(r);
-    Test.grid_visual(hConsole);
-    Test.pick_point();
-    Test.grid_visual(hConsole);
-    while (!Test._pathend)
-    {
-        //Sleep(600);
-        Test.algorithm();
-        if (Test._backtrack)
-            break;
-
-        //cin >> end;
-        //Test.grid_visual(hConsole);
-    }
-    Test.create_path();
-    Test.grid_visual(hConsole);
-
-    //for (unsigned i = 0; i < 20; i++)
-    //    cout << Test._direct_path[i] << endl;
-
-    cout << "Program end." << endl;
-    cin >> end;
-}
-
+// Creates a grid with random obsticals
 void PathFindingV3::grid_create(random_device& r)
 {
     int shift_data = 0; // For moving data to adjacent local areas
@@ -119,6 +65,7 @@ void PathFindingV3::grid_create(random_device& r)
     }
 }
 
+// Visuals
 void PathFindingV3::grid_visual(HANDLE& hConsole)
 {
     auto color_text = [](int color, HANDLE& hConsole) // Color based on input
@@ -176,6 +123,7 @@ void PathFindingV3::grid_visual(HANDLE& hConsole)
 
 }
 
+// Pick start and finish values
 void PathFindingV3::pick_point()
 {
     string select_str;
@@ -227,6 +175,7 @@ void PathFindingV3::pick_point()
     _finish = tempvalue;
 }
 
+// Produces a grid of values with _start as 0 expanding outward
 void PathFindingV3::algorithm()
 {
     SetStartinPathGrid(_StartPos),
@@ -281,6 +230,7 @@ void PathFindingV3::algorithm()
     }
 }
 
+// Identifies the quickest path
 void PathFindingV3::create_path()
 {
     _DirectPath.clear(); // Empty the path
@@ -301,6 +251,7 @@ void PathFindingV3::create_path()
     PathIntGridReset(); // Resets the grid for reuse
 }
 
+// Runs the path code and returns the path to follow as a vector
 vector<int> PathFindingV3::path_get()
 {
     _PathEnd = false;
@@ -316,6 +267,33 @@ vector<int> PathFindingV3::path_get()
     return _DirectPath; // Return the calculated path
 }
 
+// Gets input from the user
+int getDimensionsInput()
+{    
+    string select_str;
+    int tempvalue = -1;
+    while (true)
+    {
+        std::getline(cin, select_str);
+        istringstream instream(select_str);
+        instream >> tempvalue;
+        if (instream)
+            if (tempvalue > -1)
+            {
+                if (tempvalue < 101)
+                    break;
+                else
+                    cout << "You need to enter a number 0-100: ";
+            }
+    };
+    return tempvalue;
+}
+
+// Gets input from the user
+pair<int, int> getStartFinishInput()
+{
+
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
