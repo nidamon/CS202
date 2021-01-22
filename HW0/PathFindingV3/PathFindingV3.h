@@ -29,17 +29,35 @@ class PathFindingV3
 {
 public:
     // This is the constructor for the PathFinding class
-    PathFindingV3(const int width, const int height, const int startx, const int starty, const int targetx, const int targety, const vector<vector<bool>> vgrid);
+    PathFindingV3(const int width, const int height, const int startx, const int starty, const int targetx, const int targety);
 
     
-    void grid_visual(HANDLE& hConsole); // Visuals
-    //void pick_point(); // Pick start and finish values
-    void algorithm(); // Produces a grid of values with _start as 0 expanding outward
+    void grid_visual(HANDLE& hConsole, const vector<vector<bool>>& vgrid); // Visuals
     void create_path(); // Identifies the quickest path
-    vector<int> path_get(); // Runs the path code and returns the path to follow as a vector
+
+
+
+    pair<int, int> NeighborCheckPath(); // Finds the best direction to move in and returns it
+
+    //extern "C" int SetStartinPathGrid(int _StartPos); // Set value at the given coordinates
+    //extern "C" int PathIntGridGet(int x, int y); // Get value at the given coordinates
+    //extern "C" int PathIntGridReset(void); // Reset the path grid
+    //
+    //extern "C" int IntegralGridGet(int x, int y); // Get value at the given coordinates
+    //extern "C" int IntegralGridAreaSumGet(long x1, long y1, long x2, long y2); // Get sum in the area of the given coordinates
+    //
+    //extern "C" int NeighborCheck(int position, int direction, int targetpos, int itercount); // Finds a path from A to B
+    //extern "C" int NeighborRetrieve(int position, int direction); // Gets the neighbor value in the given direction from ASM
+    //
+    //extern "C" int NeighborCheckPath(int position); // Gets the neighbor value from ASM
+    //
+    //extern "C" int BoolGridGet(int x, int y); // Reads from the bool grid and returns collision bool
+
+    void algorithm(); // Produces a grid of values with _start as 0 expanding outward
+    vector<pair<int, int>> path_get(); // Runs the path code and returns the path to follow as a vector
 
     bool _pathEnd;
-    vector<int> _directPath;
+    vector<pair<int, int>> _directPath;
     bool _creatPath;
 
 private:
@@ -57,8 +75,14 @@ private:
     //bool _backTrack;
 };
 
+// const vector<vector<bool>>& vgrid
+
+
 // Creates a grid with random obsticals
 void grid_create(random_device& r, const int width, const int height, vector<vector<bool>>& vgrid, float percentFill);
+
+// Creates an integral image of the grid for quick area checking
+void integralGridCreate(const vector<vector<bool>>& vgrid, vector<vector<int>>& vpath);
 
 // Gets input from the user
 int getDimensionsInput();

@@ -29,9 +29,10 @@ int main()
         cout << "The percent fill has been changed to 70%" << endl;
     }
 
-    grid_create(r, width, height, vgrid, percentFill);
+    grid_create(r, width, height, vgrid, percentFill); // Make the 2d grid
 
-
+    vector<vector<int>> vpath(width, vector<int>(height, -1));
+    integralGridCreate(vgrid, vpath);
 
     cout << "Enter a start point: " << endl;
     pair<int, int> start = getStartFinishInput(width, height, vgrid);
@@ -47,7 +48,9 @@ int main()
             break;
     }
 
-    PathFindingV3 Test(width, height, start.first, start.second, finish.first, finish.second, vgrid); // Takes an x and y respectively
+
+
+    PathFindingV3 Test(width, height, start.first, start.second, finish.first, finish.second); // Takes an x and y respectively
 
 
 
