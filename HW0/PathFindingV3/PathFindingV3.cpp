@@ -19,8 +19,8 @@ PathFindingV3::PathFindingV3(const int width, const int height, const int startx
     _targetPos{ targetx, targety },
     _width{ width },
     _height{ height },
-    _vpath(width, vector<int>(height, -1)) // flow grid
-//        _backtrack{ false }
+    _vpath(width, vector<int>(height, -1)), // flow grid
+    _backTrack{ false }
 {};
 
 
@@ -35,23 +35,23 @@ void PathFindingV3::grid_visual(HANDLE& hConsole, const vector<vector<bool>>& vg
 
     system("cls"); // refreshes the console screen.
 
-    for (unsigned i = 0; i < _height; i++)
+    for (unsigned y = 0; y < _height; y++)
     {
-        for (unsigned k = 0; k < _width; k++)
+        for (unsigned x = 0; x < _width; x++)
         {
-            if (_grid[i * _width + k] % 10 == 2)
+            if (vgrid[x][y])
             {
                 color_text(15, hConsole); // White
                 cout << "[]";
             }
-            else if (_backtrack && (std::find(std::begin(_direct_path), std::end(_direct_path), (i * _xlength + k)) != std::end(_direct_path)))
+            else if (_backTrack && (std::find(std::begin(_directPath), std::end(_directPath), (x, y)) != std::end(_directPath)))
             {
                 color_text(14, hConsole); // Yellow
                 cout << "[]";
             }
-            else if (_path[i * _xlength + k] != -1)
+            else if (_vpath[x][y] != -1)
             {
-                if (!_backtrack)
+                if (!_backTrack)
                 {
                     color_text(10, hConsole); // Bright green
                     cout << "[]";
@@ -72,11 +72,11 @@ void PathFindingV3::grid_visual(HANDLE& hConsole, const vector<vector<bool>>& vg
     }
     color_text(7, hConsole); // Default white
 
-    for (unsigned i = 0; i < _yheight; i++)
+    for (unsigned y = 0; y < _height; y++)
     {
-        for (unsigned k = 0; k < _xlength; k++)
+        for (unsigned x = 0; x < _width; x++)
         {
-            cout << setw(3) << right << _path[i * _xlength + k] << "";
+            cout << setw(3) << right << _vpath[x][y] << "";
         }
         cout << endl;
     }
@@ -84,85 +84,96 @@ void PathFindingV3::grid_visual(HANDLE& hConsole, const vector<vector<bool>>& vg
 }
 
 // Produces a grid of values with _start as 0 expanding outward
-void PathFindingV3::algorithm()
+void PathFindingV3::algorithm(const vector<vector<bool>>& vgrid)
 {
-    SetStartinPathGrid(_StartPos),
-        _alg_values.push_back(_StartPos);
-    while (!_PathEnd && !_CreatPath)
+    _vpath[_startPos.first][_startPos.second];
+    _algValues.push_back(_startPos);
+        int Count = _dataCount;
+        int offSetX = 0, offSetY = 0;
+        int x = 0, y = 0;
+    while (!_pathEnd && !_creatPath)
     {
-        int Count = _DataCount;
-        _DataCount = 0;
+        _dataCount = 0;
         for (int Direction = 0; Direction < 4; Direction++) // Check each North, West, East, and South
         {
+            switch (Direction)  
+            {
+            case 0: // Check north
+                offSetX = 0;
+                offSetY = -1;
+                break;
+            case 1: // Check east
+                offSetX = 1;
+                offSetY = 0;
+                break;
+            case 2: // Check south
+                offSetX = 0;
+                offSetY = 1;
+                break;
+            case 3: // Check west
+                offSetX = -1;
+                offSetY = 0;
+                break;
+            default:
+                cout << "Error in switch: invalid Direction => " << Direction << endl;
+                int stop;
+                cin >> stop;
+                break;
+            }
             for (unsigned int i = 0; i < Count + 1; i++)
             {
-                int RET = NeighborCheck(_alg_values[_alg_values_location + i], // Gets the neighboring cell in the given direction
-                    Direction, _TargetPos, _IterCount);
-                if (RET == 1)
+                x = _algValues[_algValuesLocation + i].first + offSetX;
+                y = _algValues[_algValuesLocation + i].second + offSetY;
+                if (x < 0 || x > _width || y < 0 || y > _height) // If we are trying to check areas out of bounds
+                    continue;
+
+                if (vgrid[x][y] == 0 && _vpath[x][y] == -1)// Current position plus the offset to check the tile in that direction
                 {
-                    int temp = NeighborRetrieve(_alg_values[_alg_values_location + i], Direction); // Gets the neighbor after confirmed accessable
-                    if (temp < 0) // Runs the following code in case of error to aid in finding the reason for the error
-                    {
-                        cout << "ERROR in NeighborRetrieve, PathFinding.cpp: Value returned below 0." << endl;
-
-                        cout << "Position: " << _alg_values[_alg_values_location + i] << endl;
-                        for (int y = 0; y < 64; y++)
-                        {
-                            for (int x = 0; x < 64; x++)
-                            {
-                                // Set specified value to its opposite
-                                cout << setw(3) << PathIntGridGet(x, y) << " "; // (rcx, rdx)
-                            }
-                            cout << endl;
-                        }
-                    }
-
-                    _alg_values.push_back(temp);
-                    _DataCount++; // Increase the count of data
+                    _vpath[x][y] = _iterCount;
+                    _algValues.push_back(pair<int, int>(x, y)); // Add new tile to the tile list
+                    _dataCount++; // Increase the count of data
                 }
-                if (RET == 2) // Finish found
+                if (x == _targetPos.first && y == _targetPos.second) // Target found
                 {
-                    _CreatPath = true;
+                    _creatPath = true;
                     break;
                 }
             }
-            if (_CreatPath)
+            if (_creatPath)
                 break;
         }
-        if (_DataCount == 0) // If there is no new data, then everything that can be moved to has been checked
-        {
-            _PathEnd = true;
-        }
-        _alg_values_location += Count; // Increase the starting point for where the next set of data points is read from
-        _IterCount++;
+        if (_dataCount == 0) // If there is no new data, then everything that can be moved to has been checked
+            _pathEnd = true;
+
+        _algValuesLocation += Count; // Increase the starting point for where the next set of data points is read from
+        _iterCount++;
     }
 }
 
-
-
-pair<int, int> PathFindingV3::NeighborCheckPath()
-{
-    pair<int, int> posCheck = _directPath.back();
-}
 
 // Runs the path code and returns the path to follow as a vector
-vector<pair<int, int>> PathFindingV3::path_get()
+vector<pair<int, int>> PathFindingV3::path_get(const vector<vector<bool>>& vgrid, const vector<vector<int>>& vIntegral)
 {
     _pathEnd = false;
-    if (IntegralGridAreaSumGet(_startPos.first, _startPos.second, _targetPos.first, _targetPos.second) == 0)
+    if (integralGridAreaSumGet(_startPos.first, _startPos.second, _targetPos.first, _targetPos.second, vIntegral) == 0)
         return { _targetPos };
-    algorithm();
+
+    algorithm(vgrid);
     if (_pathEnd)
     {
-        pathIntGridReset(); // Because the original reset was in Create_Path() we need to call it before leaving in the case that we don't get to Create_Path()
-        return { -1 };
+        cout << "No path to destination could be found." << endl;
+        return { pair<int, int>(-1, -1) }; // Return invalid coordinates
     }
+
     create_path();
     return _directPath; // Return the calculated path
 }
 
+// Finds the best direction to move in and returns it
+pair<int, int> NeighborCheckPath()
+{
 
-
+}
 
 // Identifies the quickest path
 void PathFindingV3::create_path()

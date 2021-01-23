@@ -12,6 +12,7 @@ using std::endl;
 using std::vector;
 #include <iomanip>
 using std::setw;
+using std::right;
 #include <random>
 using std::random_device;
 #include <sstream>
@@ -22,6 +23,9 @@ using std::istringstream;
 using std::string;
 #include <utility>
 using std::pair;
+#include <algorithm>
+//#include <iterator>
+
 
 using std::size_t;
 
@@ -53,8 +57,8 @@ public:
     //
     //extern "C" int BoolGridGet(int x, int y); // Reads from the bool grid and returns collision bool
 
-    void algorithm(); // Produces a grid of values with _start as 0 expanding outward
-    vector<pair<int, int>> path_get(); // Runs the path code and returns the path to follow as a vector
+    void algorithm(const vector<vector<bool>>& vgrid); // Produces a grid of values with _start as 0 expanding outward
+    vector<pair<int, int>> path_get(const vector<vector<bool>>& vgrid, const vector<vector<int>>& vIntegral); // Runs the path code and returns the path to follow as a vector
 
     bool _pathEnd;
     vector<pair<int, int>> _directPath;
@@ -64,7 +68,7 @@ private:
     //vector<int> _grid;
 
     vector<vector<int>> _vpath;
-    vector<int> _algValues;
+    vector<pair<int, int>> _algValues;
     unsigned _algValuesLocation;
     unsigned _dataCount;
     int _width;
@@ -72,7 +76,7 @@ private:
     int _iterCount;
     pair<int, int> _targetPos;
     pair<int, int> _startPos;
-    //bool _backTrack;
+    bool _backTrack;
 };
 
 // const vector<vector<bool>>& vgrid
