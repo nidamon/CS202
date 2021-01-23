@@ -28,49 +28,49 @@ PathFindingV3::PathFindingV3(const int width, const int height, const int startx
 // Visuals
 void PathFindingV3::grid_visual(HANDLE& hConsole, const vector<vector<bool>>& vgrid)
 {
-    auto color_text = [](int color, HANDLE& hConsole) // Color based on input
-    {
-        SetConsoleTextAttribute(hConsole, color);
-    };
+    //auto color_text = [](int color, HANDLE& hConsole) // Color based on input
+    //{
+    //    SetConsoleTextAttribute(hConsole, color);
+    //};
 
-    system("cls"); // refreshes the console screen.
+    //system("cls"); // refreshes the console screen.
 
-    for (unsigned y = 0; y < _height; y++)
-    {
-        for (unsigned x = 0; x < _width; x++)
-        {
-            if (vgrid[x][y])
-            {
-                color_text(15, hConsole); // White
-                cout << "[]";
-            }
-            else if (_backTrack && (std::find(std::begin(_directPath), std::end(_directPath), (x, y)) != std::end(_directPath)))
-            {
-                color_text(14, hConsole); // Yellow
-                cout << "[]";
-            }
-            else if (_vpath[x][y] != -1)
-            {
-                if (!_backTrack)
-                {
-                    color_text(10, hConsole); // Bright green
-                    cout << "[]";
-                }
-                else
-                {
-                    color_text(2, hConsole); // Dark green
-                    cout << "[]";
-                }
-            }
-            else
-            {
-                color_text(8, hConsole); // Dark gray
-                cout << "[]";
-            }
-        }
-        cout << endl;
-    }
-    color_text(7, hConsole); // Default white
+    //for (unsigned y = 0; y < _height; y++)
+    //{
+    //    for (unsigned x = 0; x < _width; x++)
+    //    {
+    //        if (vgrid[x][y])
+    //        {
+    //            color_text(15, hConsole); // White
+    //            cout << "[]";
+    //        }
+    //        else if (_backTrack && (std::find(std::begin(_directPath), std::end(_directPath), (x, y)) != std::end(_directPath)))
+    //        {
+    //            color_text(14, hConsole); // Yellow
+    //            cout << "[]";
+    //        }
+    //        else if (_vpath[x][y] != -1)
+    //        {
+    //            if (!_backTrack)
+    //            {
+    //                color_text(10, hConsole); // Bright green
+    //                cout << "[]";
+    //            }
+    //            else
+    //            {
+    //                color_text(2, hConsole); // Dark green
+    //                cout << "[]";
+    //            }
+    //        }
+    //        else
+    //        {
+    //            color_text(8, hConsole); // Dark gray
+    //            cout << "[]";
+    //        }
+    //    }
+    //    cout << endl;
+    //}
+    //color_text(7, hConsole); // Default white
 
     for (unsigned y = 0; y < _height; y++)
     {
@@ -80,23 +80,22 @@ void PathFindingV3::grid_visual(HANDLE& hConsole, const vector<vector<bool>>& vg
         }
         cout << endl;
     }
-
 }
 
 // Produces a grid of values with _start as 0 expanding outward
 void PathFindingV3::algorithm(const vector<vector<bool>>& vgrid)
 {
-    _vpath[_startPos.first][_startPos.second];
+    _vpath[_startPos.first][_startPos.second] = 0;
     _algValues.push_back(_startPos);
-        int Count = _dataCount;
-        int offSetX = 0, offSetY = 0;
-        int x = 0, y = 0;
+    unsigned Count = _dataCount;
+    int offSetX = 0, offSetY = 0;
+    int x = 0, y = 0;
     while (!_pathEnd && !_creatPath)
     {
         _dataCount = 0;
         for (int Direction = 0; Direction < 4; Direction++) // Check each North, West, East, and South
         {
-            switch (Direction)  
+            switch (Direction)
             {
             case 0: // Check north
                 offSetX = 0;
@@ -150,7 +149,6 @@ void PathFindingV3::algorithm(const vector<vector<bool>>& vgrid)
     }
 }
 
-
 // Runs the path code and returns the path to follow as a vector
 vector<pair<int, int>> PathFindingV3::path_get(const vector<vector<bool>>& vgrid, const vector<vector<int>>& vIntegral)
 {
@@ -170,26 +168,105 @@ vector<pair<int, int>> PathFindingV3::path_get(const vector<vector<bool>>& vgrid
 }
 
 // Finds the best direction to move in and returns it
-pair<int, int> NeighborCheckPath()
+pair<int, int> PathFindingV3::neighborCheckPath()
 {
+    int offSetX = 0, offSetY = 0;
+    pair<int, int> xy(0, 0);
+    int lowestIteration = 1000; // We will be looking for the lowest value for the "best move" that gets closer to the start (via backtracking)
+    pair<int, int> bestMove(-1, -1);
 
+    for (int Direction = 0; Direction < 8; Direction++) // Check each North, West, East, and South
+    {
+        switch (Direction)
+        {
+        case 0: // Check north
+            offSetX = 0;
+            offSetY = -1;
+            break;
+        case 1: // Check east
+            offSetX = 1;
+            offSetY = 0;
+            break;
+        case 2: // Check south
+            offSetX = 0;
+            offSetY = 1;
+            break;
+        case 3: // Check west
+            offSetX = -1;
+            offSetY = 0;
+            break;
+        case 4: // Check northwest
+            offSetX = -1;
+            offSetY = -1;
+            break;
+        case 5: // Check northeast
+            offSetX = 1;
+            offSetY = -1;
+            break;
+        case 6: // Check southeast
+            offSetX = 1;
+            offSetY = 1;
+            break;
+        case 7: // Check southwest
+            offSetX = -1;
+            offSetY = 1;
+            break;
+        default:
+            cout << "Error in switch: invalid Direction while backtracking => " << Direction << endl;
+            int stop;
+            cin >> stop;
+            break;
+        }
+
+        xy.first = _directPath.back().first + offSetX;
+        xy.second = _directPath.back().second + offSetY;
+
+        if (xy.first < 0 || xy.first > _width || xy.second < 0 || xy.second > _height) // Check for out of bounds
+            continue;
+
+        if (Direction == 4) // Below are north check and west check
+            if (_vpath[xy.first + 1][xy.second] == -1 || _vpath[xy.first][xy.second + 1] == -1) // Check if the tile above or to the left are solid(They will be -1 if unavailable)
+                continue;
+        if (Direction == 5) // Below are north check and east check
+            if (_vpath[xy.first - 1][xy.second] == -1 || _vpath[xy.first][xy.second + 1] == -1) // Check if the tile above or to the left are solid(They will be -1 if unavailable)
+                continue;
+        if (Direction == 6) // Below are south check and east check
+            if (_vpath[xy.first - 1][xy.second] == -1 || _vpath[xy.first][xy.second - 1] == -1) // Check if the tile above or to the left are solid(They will be -1 if unavailable)
+                continue;
+        if (Direction == 7) // Below are south check and west check
+            if (_vpath[xy.first + 1][xy.second] == -1 || _vpath[xy.first][xy.second - 1] == -1) // Check if the tile above or to the left are solid(They will be -1 if unavailable)
+                continue;
+
+        if (_vpath[xy.first][xy.second] < lowestIteration) // Set best move to the new best if so
+        {
+            lowestIteration = _vpath[xy.first][xy.second];
+            bestMove = xy;
+        }
+    }
+    return bestMove;
 }
 
 // Identifies the quickest path
 void PathFindingV3::create_path()
 {
-    _directPath.clear(); // Empty the path
+    _directPath.clear(); // Empty the path if it had anything
     _directPath.push_back(_targetPos); // Set the first position in the path to the start position
-    pair<int, int> NewPos(0, 0);
+    pair<int, int> newPos(0, 0);
 
     int preventOverrun = 0;
-    while (NewPos != _startPos)
+    while (newPos != _startPos)
     {
-        NewPos = NeighborCheckPath(); // Finds the best direction to move in and returns it
-        if (NewPos != _directPath.back())
-            _directPath.push_back(NewPos); // Adds the new position
+        newPos = neighborCheckPath(); // Finds the best direction to move in and returns it
+        if (newPos != _directPath.back())
+            _directPath.push_back(newPos); // Adds the new position
+        else
+        {
+            cout << "NewPos was a repeat of the last newPos." << endl;
+            int stop;
+            cin >> stop;
+        }
         preventOverrun++;
-        if (preventOverrun > _iterCount)
+        if (preventOverrun > _iterCount + 1)
             break;
     }
 }
@@ -241,163 +318,6 @@ int integralGridAreaSumGet(const int startx, const int starty, const int targetx
 
 
     return (vIntegral[rightX][lowerY] - lowerLeft - upperRight + upperLeft); // Calculates the sum here
-}
-
-// Creates a grid with random obsticals
-void grid_create(random_device& r, const int width, const int height, vector<vector<bool>>& vgrid, float percentFill)
-{
-    int dataPoint = 0; // For moving data to adjacent local areas
-    std::default_random_engine e1(r());
-    std::uniform_int_distribution<int> uniform_dist(0, width * height - 1);
-
-    if (percentFill < 0.01f) // Prevent percentFill from getting too low or too high
-        percentFill = 0.01f;
-    if (percentFill > 0.7f)
-        percentFill = 0.7f;
-
-    for (unsigned i = 0; i < unsigned int((float)(width * height)* percentFill); i++) // Places a 2 randomly into _grid
-    {
-        dataPoint = uniform_dist(e1);
-        if (dataPoint < -1)
-            i--;
-        else if (dataPoint > width* height - 1)
-            i--;
-        else
-        {
-            if (vgrid[dataPoint % width][dataPoint / width] == false) // Confirm available tile for solidifying
-                vgrid[dataPoint % width][dataPoint / width] = true;
-            else
-                i--;
-        }
-    }
-}
-
-// Creates an integral image of the grid for quick area checking
-void integralGridCreate(const vector<vector<bool>>& vgrid, vector<vector<int>>& vIntegral)
-{
-    for (int y = 0; y < vgrid.size(); y++)
-    {
-        for (int x = 0; x < vgrid[y].size(); x++)
-        {
-            if (vgrid[x][y]) // True or false
-                vIntegral[x][y] = 1;
-
-            if (x == 0 && y == 0)
-                continue;
-            else if (x > 0 && y == 0)
-            {
-                vIntegral[x][y] += vIntegral[x - 1][y]; // The sum of the row to the left
-                continue;
-            }
-            else if (x == 0 && y > 0)
-            {
-                vIntegral[x][y] += vIntegral[x][y - 1]; // The sum of the column above
-                continue;
-            }
-            else if (x > 0 && y > 0)
-            {
-                vIntegral[x][y] += vIntegral[x][y - 1] + vIntegral[x - 1][y] - vIntegral[x - 1][y - 1]; // The sum of those to the left and up
-                continue;
-            }
-            else
-            {
-                int waiting;
-                cout << "Something unexpected happened when summing up the integral image. Type something to continue" << endl;
-                cin >> waiting;
-            }
-        }
-    }
-}
-
-// Gets input from the user
-int getDimensionsInput()
-{    
-    string select_str;
-    int tempvalue = -1;
-    while (true)
-    {
-        std::getline(cin, select_str);
-        istringstream instream(select_str);
-        instream >> tempvalue;
-        if (instream)
-            if (tempvalue > -1)
-            {
-                if (tempvalue < 101)
-                    break;
-                else
-                    cout << "You need to enter a number 0-100: ";
-            }
-    };
-    return tempvalue;
-}
-
-// Gets input from the user
-pair<int, int> getStartFinishInput(const int width, const int height, const vector<vector<int>>& vgrid)
-{
-    string select_str;
-    pair<int, int> tempValuesXY(-1, -1);
-
-    while (true) // Gets the users start position (finish and start swapped cause it looks better)
-    {
-        cout << "x = ";
-        std::getline(cin, select_str); // Get x
-        istringstream instream(select_str);
-        instream >> tempValuesXY.first;
-
-        if (instream)
-            if (tempValuesXY.first > -1)
-                if (tempValuesXY.first < width)
-                {
-                    cout << endl; // Get y
-                    cout << "y = ";
-                    std::getline(cin, select_str);
-                    istringstream instream(select_str);
-                    instream >> tempValuesXY.second;
-
-                    if (instream)
-                        if (tempValuesXY.second > -1)
-                            if (tempValuesXY.second < height)
-                            {
-                                if (vgrid[tempValuesXY.first][tempValuesXY.second] != 1) // The tile is not solid
-                                    break;
-                                else
-                                    cout << "That tile is unavailable. Pick a different one: ";
-                            }
-                            else
-                                cout << "You need to enter a number 0-" << height - 1 << endl;
-                }
-                else
-                    cout << "You need to enter a number 0-" << width - 1 << endl;
-    }
-
-    return tempValuesXY;
-
-    //_start = tempvalue;
-    //_path[_start] = 0;
-    //_alg_values.push_back(_start);
-    //tempvalue = -1;
-    //cout << "Enter a starting point (0-" << width * height - 1 << "): ";
-    //while (true) // Gets the users finish position (finish and start swapped cause it looks better)
-    //{
-    //    std::getline(cin, select_str);
-    //    istringstream instream(select_str);
-    //    instream >> tempvalue;
-    //    if (instream)
-    //        if (tempvalue > -1)
-    //            if (tempvalue < width * height)
-    //            {
-    //                if (_grid[tempvalue] % 10 != 2)
-    //                {
-    //                    if (_finish != _start)
-    //                        break;
-    //                }
-    //                else
-    //                    cout << "That tile is unavailable. Pick a different one: ";
-    //            }
-    //            else
-    //                cout << "You need to enter a number 0-" << width * height - 1 << ": ";
-    //}
-    //_finish = tempvalue;
 }
 
 
