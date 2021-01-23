@@ -55,7 +55,6 @@ private:
     int _iterCount;
     pair<int, int> _targetPos;
     pair<int, int> _startPos;
-    bool _backTrack;
     bool _pathEnd;
     vector<pair<int, int>> _directPath;
     bool _creatPath;

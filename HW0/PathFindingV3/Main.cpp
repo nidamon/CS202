@@ -197,7 +197,7 @@ pair<int, int> getStartFinishInput(const int width, const int height, const vect
                                 if (vgrid[tempValuesXY.first][tempValuesXY.second] != 1) // The tile is not solid
                                     break;
                                 else
-                                    cout << "That tile is unavailable. Pick a different one: ";
+                                    cout << "That tile is unavailable. Pick a different one: " << endl;
                             }
                             else
                                 cout << "You need to enter a number 0-" << height - 1 << endl;

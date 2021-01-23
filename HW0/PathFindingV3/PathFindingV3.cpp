@@ -19,8 +19,7 @@ PathFindingV3::PathFindingV3(const int width, const int height, const int startx
     _targetPos{ targetx, targety },
     _width{ width },
     _height{ height },
-    _vpath(width, vector<int>(height, -1)), // flow grid
-    _backTrack{ false }
+    _vpath(width, vector<int>(height, -1)) // flow grid
 {};
 
 
@@ -28,55 +27,62 @@ PathFindingV3::PathFindingV3(const int width, const int height, const int startx
 // Visuals
 void PathFindingV3::grid_visual(HANDLE& hConsole, const vector<vector<bool>>& vgrid)
 {
-    //auto color_text = [](int color, HANDLE& hConsole) // Color based on input
-    //{
-    //    SetConsoleTextAttribute(hConsole, color);
-    //};
-
-    //system("cls"); // refreshes the console screen.
-
-    //for (unsigned y = 0; y < _height; y++)
-    //{
-    //    for (unsigned x = 0; x < _width; x++)
-    //    {
-    //        if (vgrid[x][y])
-    //        {
-    //            color_text(15, hConsole); // White
-    //            cout << "[]";
-    //        }
-    //        else if (_backTrack && (std::find(std::begin(_directPath), std::end(_directPath), (x, y)) != std::end(_directPath)))
-    //        {
-    //            color_text(14, hConsole); // Yellow
-    //            cout << "[]";
-    //        }
-    //        else if (_vpath[x][y] != -1)
-    //        {
-    //            if (!_backTrack)
-    //            {
-    //                color_text(10, hConsole); // Bright green
-    //                cout << "[]";
-    //            }
-    //            else
-    //            {
-    //                color_text(2, hConsole); // Dark green
-    //                cout << "[]";
-    //            }
-    //        }
-    //        else
-    //        {
-    //            color_text(8, hConsole); // Dark gray
-    //            cout << "[]";
-    //        }
-    //    }
-    //    cout << endl;
-    //}
-    //color_text(7, hConsole); // Default white
-
-    for (unsigned y = 0; y < _height; y++)
+    auto color_text = [](int color, HANDLE& hConsole) // Color based on input
     {
-        for (unsigned x = 0; x < _width; x++)
+        SetConsoleTextAttribute(hConsole, color);
+    };
+
+    vector<int> xy(_directPath.size());
+
+    for (int i = 0; i < _directPath.size(); i++) // Create and fill two vectors with the x and y coordinates
+    {
+        //cout << _directPath[i].first << " " << _directPath[i].second << endl;
+        xy[i] = _directPath[i].first + _directPath[i].second * _width;
+    }
+
+    for (int y = 0; y < _height; y++)
+    {
+        for (int x = 0; x < _width; x++)
         {
-            cout << setw(3) << right << _vpath[x][y] << "";
+            if (vgrid[x][y])
+            {
+                color_text(15, hConsole); // White
+                cout << "[]";
+            }
+            else if (_pathEnd || _creatPath && (std::find(std::begin(xy), std::end(xy), x + y * _width) != std::end(xy)))
+            {
+                color_text(14, hConsole); // Yellow
+                cout << "[]";
+            }
+            else if (_vpath[x][y] != -1)
+            {
+                if (!(_pathEnd || _creatPath))
+                {
+                    color_text(10, hConsole); // Bright green
+                    cout << "[]";
+                }
+                else
+                {
+                    color_text(2, hConsole); // Dark green
+                    cout << "[]";
+                }
+            }
+            else
+            {
+                color_text(8, hConsole); // Dark gray
+                cout << "[]";
+            }
+        }
+        cout << endl;
+    }
+    color_text(7, hConsole); // Default white
+    cout << endl;
+
+    for (int y = 0; y < _height; y++)
+    {
+        for (int x = 0; x < _width; x++)
+        {
+            cout << setw(3) << right << _vpath[x][y];
         }
         cout << endl;
     }
@@ -87,11 +93,11 @@ void PathFindingV3::algorithm(const vector<vector<bool>>& vgrid)
 {
     _vpath[_startPos.first][_startPos.second] = 0;
     _algValues.push_back(_startPos);
-    unsigned Count = _dataCount;
     int offSetX = 0, offSetY = 0;
     int x = 0, y = 0;
     while (!_pathEnd && !_creatPath)
-    {
+    {    
+        unsigned Count = _dataCount;
         _dataCount = 0;
         for (int Direction = 0; Direction < 4; Direction++) // Check each North, West, East, and South
         {
@@ -123,7 +129,8 @@ void PathFindingV3::algorithm(const vector<vector<bool>>& vgrid)
             {
                 x = _algValues[_algValuesLocation + i].first + offSetX;
                 y = _algValues[_algValuesLocation + i].second + offSetY;
-                if (x < 0 || x > _width || y < 0 || y > _height) // If we are trying to check areas out of bounds
+
+                if (x < 0 || x > _width - 1 || y < 0 || y > _height - 1) // If we are trying to check areas out of bounds
                     continue;
 
                 if (vgrid[x][y] == 0 && _vpath[x][y] == -1)// Current position plus the offset to check the tile in that direction
@@ -153,6 +160,8 @@ void PathFindingV3::algorithm(const vector<vector<bool>>& vgrid)
 vector<pair<int, int>> PathFindingV3::path_get(const vector<vector<bool>>& vgrid, const vector<vector<int>>& vIntegral)
 {
     _pathEnd = false;
+
+    // Quick check for if we can just head straight to the target position
     if (integralGridAreaSumGet(_startPos.first, _startPos.second, _targetPos.first, _targetPos.second, vIntegral) == 0)
         return { _targetPos };
 
@@ -221,7 +230,7 @@ pair<int, int> PathFindingV3::neighborCheckPath()
         xy.first = _directPath.back().first + offSetX;
         xy.second = _directPath.back().second + offSetY;
 
-        if (xy.first < 0 || xy.first > _width || xy.second < 0 || xy.second > _height) // Check for out of bounds
+        if (xy.first < 0 || xy.first > _width - 1 || xy.second < 0 || xy.second > _height - 1) // Check for out of bounds
             continue;
 
         if (Direction == 4) // Below are north check and west check
@@ -237,7 +246,7 @@ pair<int, int> PathFindingV3::neighborCheckPath()
             if (_vpath[xy.first + 1][xy.second] == -1 || _vpath[xy.first][xy.second - 1] == -1) // Check if the tile above or to the left are solid(They will be -1 if unavailable)
                 continue;
 
-        if (_vpath[xy.first][xy.second] < lowestIteration) // Set best move to the new best if so
+        if (_vpath[xy.first][xy.second] != -1 && _vpath[xy.first][xy.second] < lowestIteration) // Set best move to the new best if so
         {
             lowestIteration = _vpath[xy.first][xy.second];
             bestMove = xy;
