@@ -20,7 +20,6 @@ int getDimensionsInput();
 pair<int, int> getStartFinishInput(const int width, const int height, const vector<vector<bool>>& vgrid);
 
 
-
 // Makes it possible to color text
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -35,7 +34,7 @@ int main()
     random_device r;
     vector<vector<bool>> vgrid(width, vector<bool>(height, false)); // A grid of two vectors.
 
-    cout << "What percentage of the grid do you want to fill (1-70): " << endl;
+    cout << "What percentage of the grid do you want to fill (1-70): ";
     float percentFill = (float)getDimensionsInput() / 100;
     if (percentFill > 0.7f)
     {
@@ -62,16 +61,11 @@ int main()
             break;
     }
 
-
-
     PathFindingV3 Test(width, height, start.first, start.second, finish.first, finish.second); // Takes an x and y respectively
 
     vector<pair<int, int>> pathToFollow = Test.path_get(vgrid, vIntegral);
 
     Test.grid_visual(hConsole, vgrid);
-
-    //for (unsigned i = 0; i < 20; i++)
-    //    cout << Test._direct_path[i] << endl;
 
     cout << "Program end." << endl;
     int end;
