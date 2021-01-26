@@ -10,9 +10,19 @@ This the third lab of CS 202 that will make use of pointers.
 
 int main()
 {
+	cout << "Raw pointer... " << endl;
 	Lab2 lab;
 	Lab2* p = &lab;
 
-	std::unique_ptr<Lab2> uLab(new Lab2("Uni"));
+	cout << endl;
+	cout << "Unique pointer... " << endl;
+	std::unique_ptr<Lab2> uLab1(new Lab2("Uni"));
 
+	cout << endl;
+	cout << "Created Unique pointer #2" << endl;
+	std::unique_ptr<Lab2> uLab2;
+
+	cout << endl;
+	cout << "Transferring ownership of \"Uni\" to Unique pointer #2" << endl;
+	uLab2 = std::move(uLab1);
 }
