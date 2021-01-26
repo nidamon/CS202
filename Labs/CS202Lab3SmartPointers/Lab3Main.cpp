@@ -5,3 +5,9 @@ CS 202
 This the third lab of CS 202 that will make use of pointers.
 */
 
+#include "Lab2Class.h"
+
+int main()
+{
+	Lab2 lab;
+}
