@@ -11,18 +11,18 @@ This is the header file for the lab2 class
 #include <iostream>
 using std::cout;
 using std::endl;
-#include <vector>
-using std::vector;
+#include <string>
+using std::string;
 
 class Lab2
 {
 public:
 	Lab2();
-	Lab2(int x);
+	Lab2(string str);
 	Lab2(const Lab2& orig);
 	~Lab2();
 
-	vector<int> _values;
+	string _name;
 private:
 
 };
