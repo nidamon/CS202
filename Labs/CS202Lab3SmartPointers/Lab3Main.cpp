@@ -25,4 +25,10 @@ int main()
 	cout << endl;
 	cout << "Transferring ownership of \"Uni\" to Unique pointer #2" << endl;
 	uLab2 = std::move(uLab1);
+
+	cout << endl;
+	cout << "Calling member function \"printStuff\"." << endl;
+	uLab2->printStuff();
+
+	cout << endl;
 }

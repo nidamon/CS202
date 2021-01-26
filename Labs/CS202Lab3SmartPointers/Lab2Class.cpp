@@ -26,3 +26,8 @@ Lab2::~Lab2()
 {
 	cout << "Called Lab2 destructor. Goodbye " << _name << endl;
 }
+
+void Lab2::printStuff()
+{
+	cout << "\"Stuff\" has been printed." << endl;
+}

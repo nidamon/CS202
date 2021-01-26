@@ -22,6 +22,8 @@ public:
 	Lab2(const Lab2& orig);
 	~Lab2();
 
+	void printStuff(); // Prints some text
+
 	string _name;
 private:
 
