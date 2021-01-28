@@ -19,12 +19,12 @@ Lab2::Lab2(const Lab2& orig)
 
 Lab2::Lab2(string str) : _name(str)
 {
-	cout << "Called Lab2 name constructor. Name is " << _name << endl;
+	cout << "Called Lab2 name constructor. Name is \"" << _name << "\"." << endl;
 }
 
 Lab2::~Lab2()
 {
-	cout << "Called Lab2 destructor. Goodbye " << _name << endl;
+	cout << "Called Lab2 destructor. Goodbye \"" << _name << "\"." << endl;
 }
 
 void Lab2::printStuff()
