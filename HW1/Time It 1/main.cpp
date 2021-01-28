@@ -10,6 +10,7 @@ This is the main.cpp file for the Time It 1 program.
 int main()
 {
 	StopWatch timer;
+	timer.Start();
 
 	return 0;
 }

@@ -19,7 +19,7 @@ class StopWatch
 public:
 	StopWatch(); // Starts the clock
 
-	//void Start(); // Restarts the clock
+	void Start(); // Restarts the clock
 	//void Stop(); // Records the end time for an event
 
 	//void ReportSec(); // Prints the time in seconds as a double

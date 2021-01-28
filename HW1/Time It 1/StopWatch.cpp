@@ -11,3 +11,10 @@ StopWatch::StopWatch() : _timeStart{ steady_clock::now() }
 {
 
 }
+
+// Restarts the clock
+void StopWatch::Start()
+{
+	cout << "Restarting the clock... " << endl;
+	_timeStart = steady_clock::now();
+}
