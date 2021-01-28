@@ -5,8 +5,11 @@ CS 202
 This is the main.cpp file for the Time It 1 program.
 */
 
+#include "StopWatch.h"
 
 int main()
 {
+	StopWatch timer;
+
 	return 0;
 }

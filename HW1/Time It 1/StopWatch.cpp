@@ -5,4 +5,9 @@ CS 202
 This is the cpp file for the StopWatch class.
 */
 
+#include "StopWatch.h"
 
+StopWatch::StopWatch() : _timeStart{ steady_clock::now() }
+{
+
+}
