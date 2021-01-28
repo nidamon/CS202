@@ -22,7 +22,7 @@ public:
 	void Start(); // Restarts the clock
 	//void Stop(); // Records the end time for an event
 
-	//void ReportSec(); // Prints the time in seconds as a double
+	void ReportSec(); // Prints the time in seconds as a double
 	//void ReportMilliSec(); // Prints the time in milliseconds as a double
 private:
 	steady_clock::time_point _timeStart;

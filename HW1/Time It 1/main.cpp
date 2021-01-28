@@ -12,5 +12,12 @@ int main()
 	StopWatch timer;
 	timer.Start();
 
+	for (int i = 0; i < 1000; i++)
+		cout << "#";
+
+	cout << endl;
+
+	timer.ReportSec();
+
 	return 0;
 }
