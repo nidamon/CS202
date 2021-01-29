@@ -22,8 +22,8 @@ public:
 	void Start(); // Restarts the clock
 	void Stop(); // Records the end time for an event
 
-	void ReportSec(); // Prints the time in seconds as a double
-	void ReportMilliSec(); // Prints the time in milliseconds as a double
+	double ReportSec(); // Prints the time in seconds as a double
+	double ReportMilliSec(); // Prints the time in milliseconds as a double
 private:
 	steady_clock::time_point _timeStart;
 	std::chrono::duration<double> _timeSpan;

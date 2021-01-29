@@ -7,36 +7,60 @@ This is the main.cpp file for the Time It 1 program.
 
 #include "StopWatch.h"
 #include <algorithm>
+//#include <string>
+//#include <functional>
 #include <random>
 #include <vector>
 using std::vector;
 
+void runFive(const int range, const vector<int>& container, const int searchType, std::mt19937& gen);
+
 int main()
 {
-	StopWatch timer;
-
 	std::random_device r;
 	std::mt19937 gen(r());
 
-	timer.Start();
-	std::uniform_int_distribution<> dis10(1, 10);
-	vector<int> container10(10);
-	for (int i = 0; i < container10.size(); i++)
-		container10[i] = i + 1;
+	int range = 10000;
+	vector<int> container(range);
+	for (int i = 0; i < container.size(); i++)
+		container[i] = i + 1;
 
-	timer.Stop();
-	timer.ReportMilliSec();
-	cout << endl;
+	int searchType = 2; // Specifies the algorithm used to search
 
-	timer.Start();
-	std::uniform_int_distribution<> dis10000(1, 10000);
-	vector<int> container10000(10000);
-	for (int i = 0; i < container10000.size(); i++)
-		container10000[i] = i + 1;
-
-	timer.Stop();
-	timer.ReportMilliSec();
-	cout << endl;
+	runFive(range, container, searchType, gen);
 
 	return 0;
+}
+
+// Uses the specified algorithm to search through the container 5 times and displays the average time
+void runFive(const int range, const vector<int>& container, const int searchType, std::mt19937& gen)
+{
+	StopWatch Timer;
+
+	std::uniform_int_distribution<> dis(1, range);
+	double timeCounted = 0.0;
+
+	switch (searchType)
+	{
+	//case 1:
+	//	for (int i = 0; i < 5; i++)
+	//	{
+	//		if ()
+	//	}
+	case 2:
+		for (int i = 0; i < 5; i++)
+		{
+			Timer.Start();
+			if (std::binary_search(container.begin(), container.end(), dis(gen)));
+
+			Timer.Stop();
+
+			timeCounted += Timer.ReportMilliSec();
+		}
+	default:
+		break;
+	}
+
+	double avergeTime = timeCounted / 5.0;
+	cout << "Average time taken = " << avergeTime << endl;
 }

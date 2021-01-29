@@ -28,17 +28,19 @@ void StopWatch::Stop()
 }
 
 // Prints the time in seconds as a double
-void StopWatch::ReportSec()
+double StopWatch::ReportSec()
 {
 	if (_timeSpan.count() == 0.0)
 		Stop();
 	cout << "StopWatch Report: " << _timeSpan.count() << " sec." << endl;
+	return _timeSpan.count();
 }
 
 // Prints the time in milliseconds as a double
-void StopWatch::ReportMilliSec()
+double StopWatch::ReportMilliSec()
 {
 	if (_timeSpan.count() == 0.0)
 		Stop();
 	cout << "StopWatch Report: " << (_timeSpan.count() * 1000.0) << " millisec." << endl;
+	return _timeSpan.count();
 }
