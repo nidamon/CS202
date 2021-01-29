@@ -24,6 +24,7 @@ void StopWatch::Stop()
 {
 	steady_clock::time_point checkTime = steady_clock::now();
 	_timeSpan = std::chrono::duration_cast<std::chrono::duration<double>>(checkTime - _timeStart);
+	cout << "Stopping the clock... " << endl;
 }
 
 // Prints the time in seconds as a double
