@@ -49,50 +49,40 @@ int main()
 void runFive(StopWatch& Timer, const int range, const vector<int>& container, const int searchType, const vector<int> goal)
 {
 	double timeCounted = 0.0;
+	bool found = false;
 
-	switch (searchType)
+	for (int i = 0; i < 5; i++)
 	{
-	case 1:
-		for (int i = 0; i < 5; i++)
+		switch (searchType)
 		{
-			if (std::search(container.begin(), container.end(), goal.begin(), goal.end()) != container.end())
-			{
-				Timer.Stop();
-				cout << "Found the item: " << goal[0] << endl;
-			}
-			else
-			{
-				Timer.Stop();
-				cout << "Did not find the item: " << goal[0] << endl;
-			}
-
-			timeCounted += Timer.ReportMilliSec();
-
-		}
-		break;
-	case 2:
-		for (int i = 0; i < 5; i++)
-		{
+		case 1: // Search
 			Timer.Start();
-			if (std::binary_search(container.begin(), container.end(), goal[0]))
-			{
-				Timer.Stop();
-				cout << "Found the item: " << goal[0] << endl;
-			}
-			else
-			{
-				Timer.Stop();
-				cout << "Did not find the item: " << goal[0] << endl;
-			}
+			found = (std::search(container.begin(), container.end(), goal.begin(), goal.end()) != container.end());
+			Timer.Stop();
+			break;
 
-			timeCounted += Timer.ReportMilliSec();
+		case 2: // Binary_search
+			Timer.Start();
+			found = std::binary_search(container.begin(), container.end(), goal[0]);
+			Timer.Stop();
+			break;
 
+		default:
+			break;
 		}
-		break;
-	default:
-		break;
+
+		if (found)
+		{
+			cout << "Found the item: " << goal[0] << endl;
+		}
+		else
+		{
+			cout << "Did not find the item: " << goal[0] << endl;
+		}	
+
+		timeCounted += Timer.ReportMilliSec();
 	}
 
 	double avergeTime = timeCounted / 5.0;
-	cout << "Average time taken = " << avergeTime << endl;
+	cout << "Average time taken = " << avergeTime << " millisec." << endl;
 }
