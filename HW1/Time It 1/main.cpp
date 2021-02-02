@@ -13,7 +13,7 @@ This is the main.cpp file for the Time It 1 program.
 #include <vector>
 using std::vector;
 
-void runFive(const int range, const vector<int>& container, const int searchType, std::mt19937& gen);
+void runFive(StopWatch & Timer, const int range, const vector<int>& container, const int searchType, const int goal);
 
 int main()
 {
@@ -22,22 +22,32 @@ int main()
 
 	int range = 10000;
 	vector<int> container(range);
+	std::uniform_int_distribution<> dis(1, range);
+
+	cout << "Filling the vector with random values after timer start." << endl;
+	StopWatch Timer;
 	for (int i = 0; i < container.size(); i++)
-		container[i] = i + 1;
+		container[i] = dis(gen); // Fill with values between 1 and range
+
+	Timer.ReportMilliSec();
+	cout << endl;
+
+	Timer.Start();
+	std::sort(container.begin(), container.end());
+	Timer.Stop();
+	Timer.ReportMilliSec();
+	cout << endl;
 
 	int searchType = 2; // Specifies the algorithm used to search
 
-	runFive(range, container, searchType, gen);
+	runFive(Timer, range, container, searchType, dis(gen));
 
 	return 0;
 }
 
 // Uses the specified algorithm to search through the container 5 times and displays the average time
-void runFive(const int range, const vector<int>& container, const int searchType, std::mt19937& gen)
+void runFive(StopWatch& Timer, const int range, const vector<int>& container, const int searchType, const int goal)
 {
-	StopWatch Timer;
-
-	std::uniform_int_distribution<> dis(1, range);
 	double timeCounted = 0.0;
 
 	switch (searchType)
@@ -51,9 +61,16 @@ void runFive(const int range, const vector<int>& container, const int searchType
 		for (int i = 0; i < 5; i++)
 		{
 			Timer.Start();
-			if (std::binary_search(container.begin(), container.end(), dis(gen)));
-
-			Timer.Stop();
+			if (std::binary_search(container.begin(), container.end(), goal))
+			{
+				Timer.Stop();
+				cout << "Found the item." << endl;
+			}
+			else
+			{
+				Timer.Stop();
+				cout << "Did not find the item." << endl;
+			}
 
 			timeCounted += Timer.ReportMilliSec();
 		}

@@ -1,0 +1,10 @@
+These are the contents of the file with numbers 1 and 1.1 for reading.This is test 1 of 2.
+This is test 1 of 2.
+This is now test 2 of 2 printed 3 times.
+This is now test 2 of 2 printed 3 times.
+This is now test 2 of 2 printed 3 times.
+1 Copy of testing 3.
+4 Testing the 4th time.
+4 Testing the 4th time.
+4 Testing the 4th time.
+4 Testing the 4th time.
