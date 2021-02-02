@@ -38,8 +38,8 @@ int main()
 	Timer.ReportMilliSec();
 	cout << endl;
 
-	int searchType = 1; // Specifies the algorithm used to search
-	int valueToFind = dis(gen);
+	int searchType = 4; // Specifies the algorithm used to search
+	int valueToFind = container[dis(gen)];
 	runFive(Timer, range, container, searchType, { valueToFind });
 
 	return 0;
@@ -67,6 +67,17 @@ void runFive(StopWatch& Timer, const int range, const vector<int>& container, co
 			Timer.Stop();
 			break;
 
+		case 3: // Find
+			Timer.Start();
+			found = (std::find(container.begin(), container.end(), goal[0]) != container.end());
+			Timer.Stop();
+			break;
+
+		case 4: // Include
+			Timer.Start();
+			found = std::includes(container.begin(), container.end(), goal.begin(), goal.end());
+			Timer.Stop();
+			break;
 		default:
 			break;
 		}
