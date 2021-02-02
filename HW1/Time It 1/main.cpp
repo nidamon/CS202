@@ -7,8 +7,8 @@ This is the main.cpp file for the Time It 1 program.
 
 #include "StopWatch.h"
 #include <algorithm>
-//#include <string>
-//#include <functional>
+#include <string>
+using std::string;
 #include <random>
 #include <vector>
 using std::vector;
@@ -29,19 +29,29 @@ int main()
 	for (int i = 0; i < (int)container.size(); i++)
 		container[i] = dis(gen); // Fill with values between 1 and range
 
-	Timer.ReportMilliSec();
+	Timer.ReportMilliSec(); // Get the time it takes to create the container
 	cout << endl;
 
-	Timer.Start();
+	Timer.Start(); 
 	std::sort(container.begin(), container.end());
 	Timer.Stop();
-	Timer.ReportMilliSec();
+	Timer.ReportMilliSec(); // Get the time it takes to sort the container
 	cout << endl;
 
-	int searchType = 4; // Specifies the algorithm used to search
 	int valueToFind = container[dis(gen)];
-	runFive(Timer, range, container, searchType, { valueToFind });
 
+	vector<string> types = { "Search", "Binary_search", "Find", "Include" };
+	for (int searchType = 1; searchType < 5; searchType++)
+	{
+		cout << endl;
+		cout << "-------------------------------------------------------------------------------------" << endl;
+		cout << types[searchType - 1] << endl;
+		cout << "-------------------------------------------------------------------------------------" << endl;
+		cout << endl;
+		runFive(Timer, range, container, searchType, { valueToFind });
+	}
+
+	cout << endl;
 	return 0;
 }
 
@@ -92,6 +102,7 @@ void runFive(StopWatch& Timer, const int range, const vector<int>& container, co
 		}	
 
 		timeCounted += Timer.ReportMilliSec();
+		cout << endl;
 	}
 
 	double avergeTime = timeCounted / 5.0;
