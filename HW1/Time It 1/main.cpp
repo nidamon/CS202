@@ -13,7 +13,7 @@ This is the main.cpp file for the Time It 1 program.
 #include <vector>
 using std::vector;
 
-void runFive(StopWatch & Timer, const int range, const vector<int>& container, const int searchType, const int goal);
+void runFive(StopWatch & Timer, const int range, const vector<int>& container, const int searchType, const vector<int> goal);
 
 int main()
 {
@@ -26,7 +26,7 @@ int main()
 
 	cout << "Filling the vector with random values after timer start." << endl;
 	StopWatch Timer;
-	for (int i = 0; i < container.size(); i++)
+	for (int i = 0; i < (int)container.size(); i++)
 		container[i] = dis(gen); // Fill with values between 1 and range
 
 	Timer.ReportMilliSec();
@@ -38,42 +38,57 @@ int main()
 	Timer.ReportMilliSec();
 	cout << endl;
 
-	int searchType = 2; // Specifies the algorithm used to search
-
-	runFive(Timer, range, container, searchType, dis(gen));
+	int searchType = 1; // Specifies the algorithm used to search
+	int valueToFind = dis(gen);
+	runFive(Timer, range, container, searchType, { valueToFind });
 
 	return 0;
 }
 
 // Uses the specified algorithm to search through the container 5 times and displays the average time
-void runFive(StopWatch& Timer, const int range, const vector<int>& container, const int searchType, const int goal)
+void runFive(StopWatch& Timer, const int range, const vector<int>& container, const int searchType, const vector<int> goal)
 {
 	double timeCounted = 0.0;
 
 	switch (searchType)
 	{
-	//case 1:
-	//	for (int i = 0; i < 5; i++)
-	//	{
-	//		if ()
-	//	}
-	case 2:
+	case 1:
 		for (int i = 0; i < 5; i++)
 		{
-			Timer.Start();
-			if (std::binary_search(container.begin(), container.end(), goal))
+			if (std::search(container.begin(), container.end(), goal.begin(), goal.end()) != container.end())
 			{
 				Timer.Stop();
-				cout << "Found the item." << endl;
+				cout << "Found the item: " << goal[0] << endl;
 			}
 			else
 			{
 				Timer.Stop();
-				cout << "Did not find the item." << endl;
+				cout << "Did not find the item: " << goal[0] << endl;
 			}
 
 			timeCounted += Timer.ReportMilliSec();
+
 		}
+		break;
+	case 2:
+		for (int i = 0; i < 5; i++)
+		{
+			Timer.Start();
+			if (std::binary_search(container.begin(), container.end(), goal[0]))
+			{
+				Timer.Stop();
+				cout << "Found the item: " << goal[0] << endl;
+			}
+			else
+			{
+				Timer.Stop();
+				cout << "Did not find the item: " << goal[0] << endl;
+			}
+
+			timeCounted += Timer.ReportMilliSec();
+
+		}
+		break;
 	default:
 		break;
 	}
