@@ -13,14 +13,14 @@ using std::string;
 #include <vector>
 using std::vector;
 
-void runFive(StopWatch & Timer, const int range, const vector<int>& container, const int searchType, const vector<int> goal);
+void runFive(StopWatch & Timer, const int range, const vector<int>& container, const int searchType, std::mt19937& gen);
 
 int main()
 {
 	std::random_device r;
 	std::mt19937 gen(r());
 
-	int range = 10000;
+	int range = 1000;
 	vector<int> container(range);
 	std::uniform_int_distribution<> dis(1, range);
 
@@ -38,8 +38,6 @@ int main()
 	Timer.ReportMilliSec(); // Get the time it takes to sort the container
 	cout << endl;
 
-	int valueToFind = container[dis(gen)];
-
 	vector<string> types = { "Search", "Binary_search", "Find", "Include" };
 	for (int searchType = 1; searchType < 5; searchType++)
 	{
@@ -48,7 +46,7 @@ int main()
 		cout << types[searchType - 1] << endl;
 		cout << "-------------------------------------------------------------------------------------" << endl;
 		cout << endl;
-		runFive(Timer, range, container, searchType, { valueToFind });
+		runFive(Timer, range, container, searchType, gen);
 	}
 
 	cout << endl;
@@ -56,13 +54,16 @@ int main()
 }
 
 // Uses the specified algorithm to search through the container 5 times and displays the average time
-void runFive(StopWatch& Timer, const int range, const vector<int>& container, const int searchType, const vector<int> goal)
+void runFive(StopWatch& Timer, const int range, const vector<int>& container, const int searchType, std::mt19937& gen)
 {
+	std::uniform_int_distribution<> dis(0, range - 1);
 	double timeCounted = 0.0;
 	bool found = false;
+	vector<int> goal = { container[0] };
 
-	for (int i = 0; i < 5; i++)
+	for (int runCount = 0; runCount < 5; runCount++)
 	{
+		goal = { container[dis(gen)] }; // Get new goal
 		switch (searchType)
 		{
 		case 1: // Search
