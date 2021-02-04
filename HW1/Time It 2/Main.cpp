@@ -26,11 +26,15 @@ using std::list;
 using std::deque;
 	
 #include "../Time It 1/StopWatch.h"
+#include "../Time It 1/StopWatch.cpp"
 
 int main()
 {
-	//StopWatch Timer;
-	//Timer.Start();
+	StopWatch Timer;
+
+	vector<string> vWords;
+
+
 	ifstream fin("The Strange Case Of Dr. Jekyll And Mr. Hyde, by Robert Louis Stevenson.txt");
 	if (!fin)
 	{
@@ -39,7 +43,10 @@ int main()
 	}
 	else
 	{
-		int count = 20;
+		string word; // Used for getting and storing words into the container
+		int count = 20;	
+		
+		Timer.Start();
 		while (true)
 		{
 			string line;
@@ -58,12 +65,31 @@ int main()
 				}
 			}
 			else
-				cout << line << endl;
+			{
+				istringstream instream(line);
+				while (true) // Break the line into words and fill the container
+				{
+					instream >> word;
+					if (instream)
+					{
+						vWords.push_back(word);
+						cout << vWords.back() << " " ;
+					}
+					else
+						break;
+				}
+			}
+			cout << endl;
 			count--;
 			if (count <= 0)
 				break;
+			
 		}
 	}
+
+	Timer.Stop();
+	Timer.ReportMilliSec();
+	cout << vWords.size() << endl;
 
 	return 0;
 }
