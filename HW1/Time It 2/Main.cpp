@@ -17,6 +17,8 @@ using std::getline;
 #include <fstream>
 using std::ifstream;
 using std::ios;
+#include <random>
+#include <algorithm>
 
 #include <vector>
 using std::vector;
@@ -39,10 +41,13 @@ int main()
 		"The Yellow Wallpaper, by Charlotte Perkins Gilman.txt"
 	};
 
+	std::random_device r;
+	std::mt19937 gen(r());
+
 	StopWatch Timer;
 
 
-	for (int book = 0; book < 5; book++)
+	for (int book = 4; book < 5; book++)
 	{
 		vector<string> vWords;
 		ifstream fin(vBooks[book]);
@@ -89,11 +94,32 @@ int main()
 		}
 		Timer.Stop();
 		Timer.ReportMilliSec();
-		cout << vWords.size() << endl;
+		cout << endl;
 
+		bool found = false;
+		std::uniform_int_distribution<> dis(0, vWords.size() - 1);
+		string strToFind = vWords[dis(gen)]; // Get a random word (string) from the vector
+		cout << "Searching for the word: " << strToFind << endl;
 
+		Timer.Start();
+		found = (std::find(vWords.begin(), vWords.end(), strToFind) != vWords.end());
+		Timer.Stop();
+		Timer.ReportMilliSec();
 
+		if (found)
+			cout << "Found the word: " << strToFind << endl;
+		else
+			cout << "Did not find the word: " << strToFind << endl;
+		cout << endl;
 
+		cout << "Begining to sort." << endl;
+		Timer.Start();
+		std::sort(vWords.begin(), vWords.end());
+		Timer.Stop();
+		Timer.ReportMilliSec();
+		cout << endl;
+
+		cout << endl;
 	}
 
 	return 0;
