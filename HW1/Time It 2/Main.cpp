@@ -30,66 +30,71 @@ using std::deque;
 
 int main()
 {
+	// Contains the five books to read through
+	vector<string> vBooks = {
+		"Alice’s Adventures in Wonderland, by Lewis Carroll.txt",
+		"The Call of the Wild, by Jack London.txt",
+		"The Strange Case Of Dr. Jekyll And Mr. Hyde, by Robert Louis Stevenson.txt",
+		"The Time Machine, by H. G. Wells.txt",
+		"The Yellow Wallpaper, by Charlotte Perkins Gilman.txt"
+	};
+
 	StopWatch Timer;
 
-	vector<string> vWords;
 
-
-	ifstream fin("The Strange Case Of Dr. Jekyll And Mr. Hyde, by Robert Louis Stevenson.txt");
-	if (!fin)
+	for (int book = 0; book < 5; book++)
 	{
-		cout << "Did not open the file" << endl;
-		return 0;
-	}
-	else
-	{
-		string word; // Used for getting and storing words into the container
-		int count = 20;	
-		
-		Timer.Start();
-		while (true)
+		vector<string> vWords;
+		ifstream fin(vBooks[book]);
+		if (!fin)
 		{
-			string line;
-			getline(fin, line);
-			if (!fin)
+			cout << "Did not open the file" << endl;
+			return 0;
+		}
+		else
+		{
+			string word; // Used for getting and storing words into the container
+
+			Timer.Start();
+			while (true)
 			{
-				if (fin.eof())
+				string line;
+				getline(fin, line);
+				if (!fin)
 				{
-					cout << "End of file." << endl;
-					break;
+					if (fin.eof())
+					{
+						cout << "End of file." << endl;
+						break;
+					}
+					else
+					{
+						cout << "Error reading file." << endl;
+						break;
+					}
 				}
 				else
 				{
-					cout << "Error reading file." << endl;
-					break;
-				}
-			}
-			else
-			{
-				istringstream instream(line);
-				while (true) // Break the line into words and fill the container
-				{
-					instream >> word;
-					if (instream)
+					istringstream instream(line);
+					while (true) // Break the line into words and fill the container
 					{
-						vWords.push_back(word);
-						cout << vWords.back() << " " ;
+						instream >> word;
+						if (instream)
+							vWords.push_back(word);
+						else
+							break;
 					}
-					else
-						break;
 				}
 			}
-			cout << endl;
-			count--;
-			if (count <= 0)
-				break;
-			
 		}
-	}
+		Timer.Stop();
+		Timer.ReportMilliSec();
+		cout << vWords.size() << endl;
 
-	Timer.Stop();
-	Timer.ReportMilliSec();
-	cout << vWords.size() << endl;
+
+
+
+	}
 
 	return 0;
 }
