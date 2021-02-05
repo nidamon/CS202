@@ -46,80 +46,145 @@ int main()
 
 	StopWatch Timer;
 
-
-	for (int book = 4; book < 5; book++)
+	for (int containerType = 0; containerType < 3; containerType++)
 	{
-		vector<string> vWords;
-		ifstream fin(vBooks[book]);
-		if (!fin)
-		{
-			cout << "Did not open the file" << endl;
-			return 0;
-		}
-		else
-		{
-			string word; // Used for getting and storing words into the container
+		cout << "------------------------------------------" << endl; // Adds a section title for each container type
 
-			Timer.Start();
-			while (true)
+		if (containerType == 0)
+			cout << "ContainerType is vector." << endl;
+		if (containerType == 1)
+			cout << "ContainerType is list." << endl;
+		if (containerType == 2)
+			cout << "ContainerType is deque." << endl;
+
+		cout << "------------------------------------------" << endl;
+
+
+		for (int book = 0; book < 5; book++)
+		{
+			cout << endl;
+			cout << "------------------------------------------------------------------------------------" << endl; // Adds a section title for each container type
+			cout << vBooks[book] << endl;
+			cout << "------------------------------------------------------------------------------------" << endl;
+
+			vector<string> vWords; // Initializing them all here so they are reinitialize each time.
+			list<string> lWords;
+			deque<string> dWords;
+
+			ifstream fin(vBooks[book]);
+			if (!fin)
 			{
-				string line;
-				getline(fin, line);
-				if (!fin)
+				cout << "Did not open the file" << endl;
+				return 0;
+			}
+			else
+			{
+				string word; // Used for getting and storing words into the container
+
+				Timer.Start();
+				while (true)
 				{
-					if (fin.eof())
+					string line;
+					getline(fin, line);
+					if (!fin)
 					{
-						cout << "End of file." << endl;
-						break;
+						if (fin.eof())
+						{
+							cout << "End of file." << endl;
+							break;
+						}
+						else
+						{
+							cout << "Error reading file." << endl;
+							break;
+						}
 					}
 					else
 					{
-						cout << "Error reading file." << endl;
-						break;
-					}
-				}
-				else
-				{
-					istringstream instream(line);
-					while (true) // Break the line into words and fill the container
-					{
-						instream >> word;
-						if (instream)
-							vWords.push_back(word);
-						else
-							break;
+						istringstream instream(line);
+						while (true) // Break the line into words and fill the container
+						{
+							instream >> word;
+							if (instream)
+							{ // Fills a container based on the type specified by the outer most for loop
+								if (containerType == 0)
+									vWords.push_back(word);
+								if (containerType == 1)
+									lWords.push_back(word);
+								if (containerType == 2)
+									dWords.push_back(word);
+							}
+							else // If not instream, then end of line
+								break;
+						}
 					}
 				}
 			}
+			Timer.Stop();
+			Timer.ReportMilliSec();
+			cout << endl;
+
+			bool found = false;
+			string strToFind = "strToFind";
+			// Gets a range based on the max of the sizes of the vector, list, and deque as only one should have more than zero
+			std::uniform_int_distribution<> dis(0, (std::max(vWords.size(), std::max(lWords.size(), dWords.size())) - 1));
+
+			if (containerType == 0) // Gets a range based on the vector's size
+				strToFind = vWords[dis(gen)]; // Get a random word (string) from the vector
+
+			if (containerType == 1) // Gets a range based on the list's size
+			{
+				int randValue = dis(gen);
+				for (string word : lWords) // Get a random word (string) from the list
+				{
+					if (randValue == 0)
+						strToFind = word;
+					randValue--;
+				}
+			}
+
+			if (containerType == 2) // Gets a range based on the deque's size
+				strToFind = dWords[dis(gen)]; // Get a random word (string) from the deque
+
+			
+
+			cout << "Searching for the word: " << strToFind << endl;
+
+			Timer.Start();
+
+			if (containerType == 0) // Find in vector
+				found = (std::find(vWords.begin(), vWords.end(), strToFind) != vWords.end());
+			if (containerType == 1) // Find in list
+				found = (std::find(lWords.begin(), lWords.end(), strToFind) != lWords.end());
+			if (containerType == 2) // Find in deque
+				found = (std::find(dWords.begin(), dWords.end(), strToFind) != dWords.end());
+
+			Timer.Stop();
+			Timer.ReportMilliSec();
+
+			if (found)
+				cout << "Found the word: " << strToFind << endl;
+			else
+				cout << "Did not find the word: " << strToFind << endl;
+			cout << endl;
+
+
+			cout << "Begining to sort." << endl;
+			Timer.Start();
+
+			if (containerType == 0) // Sort vector
+				std::sort(vWords.begin(), vWords.end());
+			if (containerType == 1) // Sort list
+				lWords.sort();
+			if (containerType == 2) // Sort deque
+				std::sort(dWords.begin(), dWords.end());
+
+			Timer.Stop();
+			Timer.ReportMilliSec();
+			cout << endl;
+
+			cout << endl;
 		}
-		Timer.Stop();
-		Timer.ReportMilliSec();
-		cout << endl;
-
-		bool found = false;
-		std::uniform_int_distribution<> dis(0, vWords.size() - 1);
-		string strToFind = vWords[dis(gen)]; // Get a random word (string) from the vector
-		cout << "Searching for the word: " << strToFind << endl;
-
-		Timer.Start();
-		found = (std::find(vWords.begin(), vWords.end(), strToFind) != vWords.end());
-		Timer.Stop();
-		Timer.ReportMilliSec();
-
-		if (found)
-			cout << "Found the word: " << strToFind << endl;
-		else
-			cout << "Did not find the word: " << strToFind << endl;
-		cout << endl;
-
-		cout << "Begining to sort." << endl;
-		Timer.Start();
-		std::sort(vWords.begin(), vWords.end());
-		Timer.Stop();
-		Timer.ReportMilliSec();
-		cout << endl;
-
-		cout << endl;
 	}
 
 	return 0;
