@@ -5,6 +5,8 @@ CS 202
 This is the Main.cpp file for the c_style_strings program.
 */
 
+#include "c_style_strings.cpp"
+
 int main()
 {
 	return 0;
