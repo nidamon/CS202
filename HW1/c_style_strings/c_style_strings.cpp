@@ -32,7 +32,7 @@ inline char* strdups(const char* s)
 }
 
 // Finds the first occurrence of the C-style string x in s.
-inline char* findx(const char* s, char* x)
+inline char* findx(const char* s, const char* x)
 {
 	int index = 0;
 	int subIndex = 0;
@@ -41,17 +41,17 @@ inline char* findx(const char* s, char* x)
 		if (s[index] == x[subIndex])
 		{
 			if (x[subIndex + 1] == '\0') // Check if char* x is null terminated on the next char -> means that x is in s
-				return strdups(x);
+			{
+				return (char*)&(s[index - subIndex]);
+			}
 			subIndex++;
 		}
 		else
 			subIndex = 0; // Reset subIndex when elements not equal
 
 		if (s[index] == '\0') // End of the given string
-			break;
+			return (char*)&(s[index]);
 		else
 			index++;
 	}
-
-	return strdups("Not present");
 }

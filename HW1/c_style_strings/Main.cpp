@@ -30,12 +30,20 @@ int main()
 	delete copy;
 	cout << endl;
 
-	auto lettersToFind = strdups("particular");
-	auto word = findx(wordsAndSentences[1], lettersToFind); // Looks for the lettersToFind
-	delete lettersToFind;
+	auto word = findx(wordsAndSentences[1], "the"); // Looks for the word "the"
+	cout << "Pointer to the word: " << word << endl; // Prints everything after the beggining of the word that was found or \0 (shows as an empty space)
 
-	cout << word << endl; // Prints the word the was found or prints "Not present"
-	delete word;
+	word = findx(wordsAndSentences[0], "hi"); // Looks for the word "hi"
+	cout << "Pointer to the word: " << word << endl; // Prints everything after the beggining of the word that was found or \0 (shows as an empty space)
+
+	word = findx(wordsAndSentences[1], "car"); // Looks for the word "the"
+	cout << "Pointer to the word: " << word << endl; // Prints everything after the beggining of the word that was found or \0 (shows as an empty space)
+	
+	word = findx(wordsAndSentences[0], "them"); // Looks for the word "them"
+	cout << "Pointer to the word: " << word << endl; // Prints everything after the beggining of the word that was found or \0 (shows as an empty space)
+
+	word = findx(wordsAndSentences[1], "type"); // Looks for the word "type"
+	cout << "Pointer to the word: " << word << endl; // Prints everything after the beggining of the word that was found or \0 (shows as an empty space)
 
 	return 0;
 }
