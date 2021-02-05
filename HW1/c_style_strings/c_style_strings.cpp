@@ -5,10 +5,6 @@ CS 202
 This is the c_style_strings.cpp file for the c_style_strings program.
 */
 
-//#include <iostream>
-//using std::cout;
-//using std::endl;
-
 // Copies a C-style string into memory it allocates dynamically (using new)
 inline char* strdups(const char* s)
 {
@@ -35,8 +31,27 @@ inline char* strdups(const char* s)
 	return duplicate;
 }
 
-//// Finds the first occurrence of the C-style string x in s.
-//char* findx(const char* s, char* x)
-//{
-//	
-//}
+// Finds the first occurrence of the C-style string x in s.
+inline char* findx(const char* s, char* x)
+{
+	int index = 0;
+	int subIndex = 0;
+	while (true) // Move through const char* s and check if elements are equal to char* x
+	{
+		if (s[index] == x[subIndex])
+		{
+			if (x[subIndex + 1] == '\0') // Check if char* x is null terminated on the next char -> means that x is in s
+				return strdups(x);
+			subIndex++;
+		}
+		else
+			subIndex = 0; // Reset subIndex when elements not equal
+
+		if (s[index] == '\0') // End of the given string
+			break;
+		else
+			index++;
+	}
+
+	return strdups("Not present");
+}
