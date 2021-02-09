@@ -6,14 +6,16 @@ This is the file that will contain the tests for Lab 6
 */
 
 #include "catch.hpp"
+#include "Vector3f.h"
 
-unsigned int factorial(unsigned int number) {
-    return number <= 1 ? number : factorial(number - 1) * number;
+bool operator==(const Vector3f& a, const Vector3f& b) { return (a.x == b.x) && (a.y == b.y) && (a.z == b.z); }
+bool operator!=(const Vector3f& a, const Vector3f& b) { return (a.x != b.x) || (a.y != b.y) || (a.z != b.z); }
+
+Vector3f a;
+Vector3f b;
+
+TEST_CASE("Vector3f constructor test", "[Vector3f]") {
+	REQUIRE(a.x == 0.0f);
+	REQUIRE(a.y == 0.0f);
+	REQUIRE(a.z == 0.0f);
 }
-
-TEST_CASE("Factorials are computed", "[factorial]") {
-    REQUIRE(factorial(1) == 1);
-    REQUIRE(factorial(2) == 2);
-    REQUIRE(factorial(3) == 6);
-    REQUIRE(factorial(10) == 3628800);
-};

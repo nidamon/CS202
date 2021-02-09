@@ -11,6 +11,11 @@ This is the header file for the Vector3f class
 class Vector3f
 {
 public:
+	Vector3f();
+
+	float x;
+	float y;
+	float z;
 
 };
 
