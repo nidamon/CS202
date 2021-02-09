@@ -14,3 +14,7 @@ Vector3f::Vector3f() : x{ 0.0f }, y{ 0.0f }, z{ 0.0f }
 Vector3f::Vector3f(float xin, float yin, float zin) : x{ xin }, y{ yin }, z{ zin }
 {
 }
+
+Vector3f::Vector3f(const Vector3f& orig) : x{ orig.x }, y{ orig.y }, z{ orig.z }
+{
+}

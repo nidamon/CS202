@@ -13,6 +13,7 @@ class Vector3f
 public:
 	Vector3f();
 	Vector3f(float x, float y, float z);
+	Vector3f(const Vector3f& orig);
 
 	float x;
 	float y;

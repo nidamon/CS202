@@ -30,3 +30,9 @@ TEST_CASE("Vector3f user input constructor test", "[Vector3f]") {
 	REQUIRE(b.y == tester2);
 	REQUIRE(b.z == tester3);
 }
+
+Vector3f c(b);
+
+TEST_CASE("Vector3f copy constructor test", "[Vector3f]") {
+	REQUIRE(c == b);
+}
