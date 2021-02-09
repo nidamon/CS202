@@ -16,6 +16,8 @@ class Ball // Because we are going to "catch" it
 {
 public:
 	Ball();
+	Ball(const string name, const string mainColor, const string secondaryColor, const string highlightColor,
+		const double radiusCm, const double weightKg, const double priceUsd, const double HMO);
 
 	string _name;
 	string _mainColor;
