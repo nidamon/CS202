@@ -14,6 +14,10 @@ using std::vector;
 #include <iostream>
 using std::cout;
 using std::endl;
+#include <iomanip>
+using std::setw;
+using std::left;
+using std::right;
 
 bool operator==(const Ball& a, const Ball& b) {
 	return (a._name == b._name) && (a._mainColor == b._mainColor) && (a._secondaryColor == b._secondaryColor)
@@ -54,12 +58,12 @@ TEST_CASE("Queue: First-in First-out", "[Queue]") {
 	std::random_device r;
 	std::mt19937 gen(r());
 
-	// Create four random Balls
+	// Create three random Balls
 	Ball first = getRandomBall(gen);
 	Ball second = getRandomBall(gen);
 	Ball third = getRandomBall(gen);
 
-	// Put the first three in the list
+	// Put the three balls in the list
 	std::list<Ball> queue = { first, second, third };
 	Ball originalLastBall = third;
 
@@ -89,12 +93,12 @@ TEST_CASE("Stack: Last-in First-out", "[Stack]") {
 	std::random_device r;
 	std::mt19937 gen(r());
 
-	// Create four random Balls
+	// Create three random Balls
 	Ball first = getRandomBall(gen);
 	Ball second = getRandomBall(gen);
 	Ball third = getRandomBall(gen);
 
-	// Put the first three in the list
+	// Put the three balls in the list
 	std::list<Ball> stack = { first, second, third };
 
 	// This should push 8 new Balls onto the stack
@@ -113,6 +117,73 @@ TEST_CASE("Stack: Last-in First-out", "[Stack]") {
 
 	REQUIRE(stack.back() == first); // Test the pop_back, we should now be looking at the first ball
 	REQUIRE(stack.back() == stack.front()); // Check that the first and last item is the same as it should be at this point
+}
+
+// Test Insert and Find
+TEST_CASE("Insert and Find", "[Insert and Find]") {
+	std::random_device r;
+	std::mt19937 gen(r());
+
+	// Fill the list with several balls
+	std::list<Ball> listing = { getRandomBall(gen), getRandomBall(gen), getRandomBall(gen),getRandomBall(gen), getRandomBall(gen), getRandomBall(gen), getRandomBall(gen), getRandomBall(gen), getRandomBall(gen) };
+
+	for (const auto &i : listing)
+	{
+		cout << left << setw(20) << i._name
+			<< "$" << setw(9) << i._priceUsd << setw(4)
+			<< i._radiusCm << setw(6) << "cm"
+			<< setw(5) << i._weightKg << setw(5) << "kg"
+			<< setw(4) << i._HMO << "Ouch LVL" << endl;
+	}
+
+	// Custom sorting
+	listing.sort([](const Ball& a, const Ball& b) {
+		if (a._priceUsd != b._priceUsd)
+			return a._priceUsd < b._priceUsd;
+		if (a._radiusCm != b._radiusCm)
+			return a._radiusCm < b._radiusCm;
+		if (a._weightKg != b._weightKg)
+			return a._weightKg < b._weightKg;
+		if (a._HMO != b._HMO)
+			return a._HMO < b._HMO;
+		return a._HMO < b._HMO;
+	});
+
+	cout << endl;
+	for (const auto& i : listing)
+	{
+		cout << left << setw(20) << i._name 
+			<< "$" << setw(9) << i._priceUsd << setw(4) 
+			<< i._radiusCm << setw(6) << "cm" 
+			<< setw(5) << i._weightKg << setw(5) << "kg" 
+			<< setw(4) << i._HMO << "Ouch LVL" << endl;
+	}
+
+
+
+
+
+
+
+
+
+	//// This should push 8 new Balls onto the stack
+	//for (int i = 0; i < 8; i++)
+	//{
+	//	Ball newball = getRandomBall(gen);
+	//	// Push newball onto the stack
+	//	stack.push_back(newball);
+	//	REQUIRE(stack.back() == newball); // Test the push_back
+	//}
+	//REQUIRE(stack.front() == first); // Check that the front is the same
+
+	//// This should pop 10 Balls off the stack
+	//for (int i = 0; i < 10; i++)
+	//	stack.pop_back();
+
+	//REQUIRE(stack.back() == first); // Test the pop_back, we should now be looking at the first ball
+	//REQUIRE(stack.back() == stack.front()); // Check that the first and last item is the same as it should be at this point
+
 }
 
 
