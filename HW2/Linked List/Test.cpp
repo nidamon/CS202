@@ -15,6 +15,12 @@ using std::vector;
 using std::cout;
 using std::endl;
 
+bool operator==(const Ball& a, const Ball& b) {
+	return (a._name == b._name) && (a._mainColor == b._mainColor) && (a._secondaryColor == b._secondaryColor)
+		&& (a._highlightColor == b._highlightColor) && (a._radiusCm == b._radiusCm) && (a._weightKg == b._weightKg)
+		&& (a._priceUsd == b._priceUsd) && (a._HMO == b._HMO);
+}
+
 Ball getRandomBall(std::mt19937& gen);
 
 // Test default constructor
@@ -43,34 +49,40 @@ TEST_CASE("Ball user specified constructor test", "[Ball]") {
 	REQUIRE(one._HMO == 6.4);
 }
 
-// Test getRandomBall
-TEST_CASE("get Random Ball test", "[Ball]") {
+// Test Queue: First-in First-out
+TEST_CASE("Queue: First-in First-out", "[Queue]") {
 	std::random_device r;
 	std::mt19937 gen(r());
 
-	Ball one = getRandomBall(gen);
-	cout << one._name << endl;
-	cout << one._mainColor << endl;
-	cout << one._secondaryColor << endl;
-	cout << one._highlightColor << endl;
-	cout << one._radiusCm << endl;
-	cout << one._weightKg << endl;
-	cout << one._priceUsd << endl;
-	cout << one._HMO << endl;
-	cout << endl;
+	// Create four random Balls
+	Ball first = getRandomBall(gen);
+	Ball second = getRandomBall(gen);
+	Ball third = getRandomBall(gen);
 
-	Ball two = getRandomBall(gen);
-	cout << two._name << endl;
-	cout << two._mainColor << endl;
-	cout << two._secondaryColor << endl;
-	cout << two._highlightColor << endl;
-	cout << two._radiusCm << endl;
-	cout << two._weightKg << endl;
-	cout << two._priceUsd << endl;
-	cout << two._HMO << endl;
+	// Put the first three in the list
+	std::list<Ball> queue = { first, second, third };
+	Ball originalLastBall = third;
+
+	// This should push 2 new Balls into the list while removing the first and second balls
+	for (int i = 0; i < 2; i++)
+	{
+		Ball newball = getRandomBall(gen);
+		// Push newball to the back of the list
+		queue.push_back(newball);
+		REQUIRE(queue.back() == newball); // Test the push_back
+
+		REQUIRE(queue.front() == first); // Check the front
+		queue.pop_front();
+		REQUIRE(queue.front() == second); // Test the pop_front
+		REQUIRE(queue.back() == newball); // Check that the back is the same
+
+		// Shift each ball to the appropriate variable and run again
+		first = second;
+		second = third;
+		third = newball;
+	}
+	REQUIRE(queue.front() == originalLastBall); // Check that the first ball is now the original last ball
 }
-
-
 
 
 
