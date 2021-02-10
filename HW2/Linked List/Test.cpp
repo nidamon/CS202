@@ -63,11 +63,11 @@ TEST_CASE("Queue: First-in First-out", "[Queue]") {
 	std::list<Ball> queue = { first, second, third };
 	Ball originalLastBall = third;
 
-	// This should push 2 new Balls into the list while removing the first and second balls
+	// This should push 2 new Balls into the queue while removing the first and second balls
 	for (int i = 0; i < 2; i++)
 	{
 		Ball newball = getRandomBall(gen);
-		// Push newball to the back of the list
+		// Push newball to the back of the queue
 		queue.push_back(newball);
 		REQUIRE(queue.back() == newball); // Test the push_back
 
@@ -84,6 +84,36 @@ TEST_CASE("Queue: First-in First-out", "[Queue]") {
 	REQUIRE(queue.front() == originalLastBall); // Check that the first ball is now the original last ball
 }
 
+// Test Stack: Last-in First-out
+TEST_CASE("Stack: Last-in First-out", "[Stack]") {
+	std::random_device r;
+	std::mt19937 gen(r());
+
+	// Create four random Balls
+	Ball first = getRandomBall(gen);
+	Ball second = getRandomBall(gen);
+	Ball third = getRandomBall(gen);
+
+	// Put the first three in the list
+	std::list<Ball> stack = { first, second, third };
+
+	// This should push 8 new Balls onto the stack
+	for (int i = 0; i < 8; i++)
+	{
+		Ball newball = getRandomBall(gen);
+		// Push newball onto the stack
+		stack.push_back(newball);
+		REQUIRE(stack.back() == newball); // Test the push_back
+	}
+	REQUIRE(stack.front() == first); // Check that the front is the same
+
+	// This should pop 10 Balls off the stack
+	for (int i = 0; i < 10; i++)
+		stack.pop_back();
+
+	REQUIRE(stack.back() == first); // Test the pop_back, we should now be looking at the first ball
+	REQUIRE(stack.back() == stack.front()); // Check that the first and last item is the same as it should be at this point
+}
 
 
 
