@@ -18,6 +18,7 @@ using std::endl;
 using std::setw;
 using std::left;
 using std::right;
+#include <algorithm>
 
 bool operator==(const Ball& a, const Ball& b) {
 	return (a._name == b._name) && (a._mainColor == b._mainColor) && (a._secondaryColor == b._secondaryColor)
@@ -127,7 +128,65 @@ TEST_CASE("Insert and Find", "[Insert and Find]") {
 	// Fill the list with several balls
 	std::list<Ball> listing = { getRandomBall(gen), getRandomBall(gen), getRandomBall(gen),getRandomBall(gen), getRandomBall(gen), getRandomBall(gen), getRandomBall(gen), getRandomBall(gen), getRandomBall(gen) };
 
-	for (const auto &i : listing)
+	std::list<double> pricesToSearchFor;
+	for (const auto& i : listing)
+		pricesToSearchFor.push_back(i._priceUsd); // Add to list and find them later
+
+	// Custom sorting
+	listing.sort([](const Ball& a, const Ball& b) {
+		if (a._priceUsd != b._priceUsd)
+			return a._priceUsd < b._priceUsd;
+		return a._HMO < b._HMO;
+	});
+
+	bool checker = false;
+	for (const auto& price : pricesToSearchFor) // Search for each recorded item from before sorting listing
+	{
+		for (const auto& item : listing) // Searching via for loop
+		{
+			if (price == item._priceUsd)
+				checker = true;
+		}
+		REQUIRE(checker);
+		checker = false;
+	}
+
+
+
+	int sizeCheck = listing.size();
+	for (int i = 0; i < 10; i++) // Insert ten balls
+	{
+		Ball one = getRandomBall(gen);
+		auto it = std::find_if(listing.begin(), listing.end(), [one](const Ball& a) {	if (a._priceUsd != one._priceUsd)
+																							return a._priceUsd > one._priceUsd;
+																						return a._HMO > one._HMO; }
+		);
+		if (it != listing.end()) {
+			listing.insert(it, one);
+		}
+		else
+			listing.push_back(one);
+
+		checker = false; // Check that the new ball was added to the list
+		for (const auto& item : listing) // Searching via for loop
+		{
+			if (one._priceUsd == item._priceUsd)
+				checker = true;
+		}
+		REQUIRE(checker);
+	}
+	REQUIRE(listing.size() == sizeCheck + 10);
+
+
+
+	double priceCheck = -1.0;
+	for (const auto& i : listing) // Check that every ball is ordered by price
+	{
+		REQUIRE(i._priceUsd >= priceCheck);
+		priceCheck = i._priceUsd; // Increase the value of priceCheck to the checked price
+	}
+
+	for (const auto& i : listing)
 	{
 		cout << left << setw(20) << i._name
 			<< "$" << setw(9) << i._priceUsd << setw(4)
@@ -135,65 +194,7 @@ TEST_CASE("Insert and Find", "[Insert and Find]") {
 			<< setw(5) << i._weightKg << setw(5) << "kg"
 			<< setw(4) << i._HMO << "Ouch LVL" << endl;
 	}
-
-	// Custom sorting
-	listing.sort([](const Ball& a, const Ball& b) {
-		if (a._priceUsd != b._priceUsd)
-			return a._priceUsd < b._priceUsd;
-		if (a._radiusCm != b._radiusCm)
-			return a._radiusCm < b._radiusCm;
-		if (a._weightKg != b._weightKg)
-			return a._weightKg < b._weightKg;
-		if (a._HMO != b._HMO)
-			return a._HMO < b._HMO;
-		return a._HMO < b._HMO;
-	});
-
-	cout << endl;
-	for (const auto& i : listing)
-	{
-		cout << left << setw(20) << i._name 
-			<< "$" << setw(9) << i._priceUsd << setw(4) 
-			<< i._radiusCm << setw(6) << "cm" 
-			<< setw(5) << i._weightKg << setw(5) << "kg" 
-			<< setw(4) << i._HMO << "Ouch LVL" << endl;
-	}
-
-
-
-
-
-
-
-
-
-	//// This should push 8 new Balls onto the stack
-	//for (int i = 0; i < 8; i++)
-	//{
-	//	Ball newball = getRandomBall(gen);
-	//	// Push newball onto the stack
-	//	stack.push_back(newball);
-	//	REQUIRE(stack.back() == newball); // Test the push_back
-	//}
-	//REQUIRE(stack.front() == first); // Check that the front is the same
-
-	//// This should pop 10 Balls off the stack
-	//for (int i = 0; i < 10; i++)
-	//	stack.pop_back();
-
-	//REQUIRE(stack.back() == first); // Test the pop_back, we should now be looking at the first ball
-	//REQUIRE(stack.back() == stack.front()); // Check that the first and last item is the same as it should be at this point
-
 }
-
-
-
-
-
-
-
-
-
 
 // Returns a random ball
 Ball getRandomBall(std::mt19937& gen)
