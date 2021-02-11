@@ -37,7 +37,17 @@ void Lab2::printStuff()
 	cout << "\"Stuff\" has been printed." << endl;
 }
 
+double Lab2::getData() const
+{
+	return _data;
+}
+
 ostream& operator<<(ostream& os, const Lab2& lab)
 {
 	return os << "This is the name and data of the lab: \"" << lab._name << "\" " << lab._data;
+}
+
+Lab2 Lab2::operator+ (const Lab2& rhs) const
+{
+	return Lab2("return", _data + rhs.getData());
 }

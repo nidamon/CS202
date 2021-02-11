@@ -5,7 +5,7 @@ CS 202
 This is the main file for lab 7
 */
 
-#include "../CS202Lab3SmartPointers/Lab2Class.h"
+#include "Lab2Class.h"
 #include <ostream>
 using std::ostream; 
 
@@ -14,5 +14,10 @@ int main()
 	const Lab2 lab("Lab7", 3.14);
 	cout << lab << endl;
 
+	const Lab2 lab2("Lab7 #2", 5.7);
+	
+	cout << endl;
+	cout << lab2 + lab << endl;
+	cout << lab << endl;
 	return 0;
 }

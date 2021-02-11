@@ -27,6 +27,14 @@ public:
 	~Lab2();
 
 	void printStuff(); // Prints some text
+	double getData() const;
+
+
+	Lab2 operator+ (const Lab2& rhs) const;
+
+
+
+
 
 	string _name;
 private:
