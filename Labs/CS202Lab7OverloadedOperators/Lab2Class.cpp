@@ -39,5 +39,5 @@ void Lab2::printStuff()
 
 ostream& operator<<(ostream& os, const Lab2& lab)
 {
-	return os << "This is the name of the lab: " << lab._name;
+	return os << "This is the name and data of the lab: \"" << lab._name << "\" " << lab._data;
 }
