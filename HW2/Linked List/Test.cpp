@@ -19,6 +19,7 @@ using std::setw;
 using std::left;
 using std::right;
 #include <algorithm>
+#include <sstream>
 
 bool operator==(const Ball& a, const Ball& b) {
 	return (a._name == b._name) && (a._mainColor == b._mainColor) && (a._secondaryColor == b._secondaryColor)
@@ -161,11 +162,7 @@ TEST_CASE("Insert and Find", "[Insert and Find]") {
 																							return a._priceUsd > one._priceUsd;
 																						return a._HMO > one._HMO; }
 		);
-		if (it != listing.end()) {
-			listing.insert(it, one);
-		}
-		else
-			listing.push_back(one);
+		listing.insert(it, one);
 
 		checker = false; // Check that the new ball was added to the list
 		for (const auto& item : listing) // Searching via for loop
@@ -175,7 +172,7 @@ TEST_CASE("Insert and Find", "[Insert and Find]") {
 		}
 		REQUIRE(checker);
 	}
-	REQUIRE(listing.size() == sizeCheck + 10);
+	REQUIRE(listing.size() == sizeCheck + 10); // Comparing size now versus the size from before + 10 items
 
 
 
@@ -186,13 +183,43 @@ TEST_CASE("Insert and Find", "[Insert and Find]") {
 		priceCheck = i._priceUsd; // Increase the value of priceCheck to the checked price
 	}
 
-	for (const auto& i : listing)
+	for (const auto& i : listing) // Check list printing
 	{
-		cout << left << setw(20) << i._name
-			<< "$" << setw(9) << i._priceUsd << setw(4)
-			<< i._radiusCm << setw(6) << "cm"
-			<< setw(5) << i._weightKg << setw(5) << "kg"
-			<< setw(4) << i._HMO << "Ouch LVL" << endl;
+		std::ostringstream sout;
+		sout << left << setw(20) << i._name
+			<< "$ " << setw(9) << i._priceUsd << setw(4)
+			<< i._radiusCm << setw(6) << " cm"
+			<< setw(5) << i._weightKg << setw(5) << " kg"
+			<< setw(4) << i._HMO << " Ouch_LVL" << endl;
+		std::istringstream sin(sout.str());
+		string name;
+		string dollarSign;
+		double price;
+		double radius;
+		string unitMeasureCM;
+		double weight;
+		string unitMeasureKG;
+		double HMO;
+		string unitMeasureOuchLVL;
+		sin >> name;
+		sin >> dollarSign;
+		sin >> price;
+		sin >> radius;
+		sin >> unitMeasureCM;
+		sin >> weight;
+		sin >> unitMeasureKG;
+		sin >> HMO;
+		sin >> unitMeasureOuchLVL;
+		REQUIRE(name == i._name);
+		REQUIRE(dollarSign == "$");
+		REQUIRE(price == i._priceUsd);
+		REQUIRE(radius == i._radiusCm);
+		REQUIRE(unitMeasureCM == "cm");
+		REQUIRE(weight == i._weightKg);
+		REQUIRE(unitMeasureKG == "kg");
+		REQUIRE(HMO == i._HMO);
+		REQUIRE(unitMeasureOuchLVL == "Ouch_LVL");
+		cout << sout.str();
 	}
 }
 
@@ -200,7 +227,7 @@ TEST_CASE("Insert and Find", "[Insert and Find]") {
 Ball getRandomBall(std::mt19937& gen)
 {
 	// For the types of the ball pitch
-	vector<string> names = { "Changeup", "Curveball", "Cutter", "Eephus", "Forkball", "Four-Seam Fastball", "Knuckleball", "Knuckle-curve", "Screwball", "Sinker", "Slider", "Splitter", "Two-Seam Fastball" };
+	vector<string> names = { "Changeup", "Curveball", "Cutter", "Eephus", "Forkball", "Four-Seam_Fastball", "Knuckleball", "Knuckle-curve", "Screwball", "Sinker", "Slider", "Splitter", "Two-Seam_Fastball" };
 	std::uniform_int_distribution<> nameDis(0, names.size() - 1);
 
 	// Color selection of primary, secondary, tertiary, and 4 metals: gold, silver, copper, bronze
