@@ -17,33 +17,35 @@ void dataCompare(const string& type, int& one, int& two, int& three, int& four);
 int main()
 {
 	// Looking at the static storage
-	static int tic1 = 1;
-	static int tic2 = 12;
-	static int tic3 = 3;
-	static int tic4 = 14;
-	dataCompare("Static", tic1, tic2, tic3, tic4);
+	static int static1 = 1;
+	static int static2 = 12;
+	static int static3 = 3;
+	static int static4 = 14;
+	dataCompare("Static", static1, static2, static3, static4);
 
 	// Looking at the stack storage
-	int ack1 = 5;
-	int ack2 = 16;
-	int ack3 = 7;
-	int ack4 = 18;
-	dataCompare("Stack", ack1, ack2, ack3, ack4);
+	int stack1 = 5;
+	int stack2 = 16;
+	int stack3 = 7;
+	int stack4 = 18;
+	dataCompare("Stack", stack1, stack2, stack3, stack4);
 
 	// Looking at the free store / heap
-	auto eStore1 = new int;
-	auto eStore2 = new int;
-	auto eStore3 = new int;
-	auto eStore4 = new int;
-	*eStore1 = 9;
-	*eStore2 = 110;
-	*eStore3 = 11;
-	*eStore4 = 112;
-	dataCompare("Free store / heap", *eStore1, *eStore2, *eStore3, *eStore4);
-	delete eStore1;
-	delete eStore2;
-	delete eStore3;
-	delete eStore4;
+	auto freeStore1 = new int(9);
+	auto freeStore2 = new int(110);
+	auto freeStore3 = new int(11);
+	auto freeStore4 = new int(112);
+	dataCompare("Free store / heap", *freeStore1, *freeStore2, *freeStore3, *freeStore4);
+	delete freeStore1;
+	delete freeStore2;
+	delete freeStore3;
+	delete freeStore4;
+
+	// Looking at the free store / heap making an array
+	auto freeStoreArray = new int[4]{ 13 , 114, 15, 116 };
+	dataCompare("Free store / heap", freeStoreArray[0], freeStoreArray[1], freeStoreArray[2], freeStoreArray[3]);
+	delete[] freeStoreArray;
+
 
 	return 0;
 }
