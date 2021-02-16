@@ -1,7 +1,7 @@
 /*Lab2.h
 Nathan Damon
 CS 202
-1/19/2021
+2/16/2021
 This is the header file for the lab2 class
 */
 
@@ -41,3 +41,4 @@ private:
 ostream& operator<<(ostream& os, const Lab2& lab);
 
 #endif
+

@@ -15,7 +15,7 @@ int main()
 	cout << lab << endl;
 
 	const Lab2 lab2("Lab7 #2", 5.7);
-	
+
 	cout << endl;
 	cout << lab2 + lab << endl;
 	cout << lab << endl;
