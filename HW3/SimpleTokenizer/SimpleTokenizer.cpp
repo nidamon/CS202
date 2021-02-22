@@ -43,7 +43,13 @@ vector<TokenAndPosition> readLines(istream& is)
 			temp._column = line.find(token) + 1; // Find column where token starts
 			tokenPos.push_back(temp);
 		}
-		cout << lineCount << endl;
 	}
 	return tokenPos;
 }	
+
+// Prints the tokens and the line and column where they are located
+void printTokens(ostream& os, const vector<TokenAndPosition>& tokens)
+{
+	for (auto& token : tokens)
+		os << " Line " << setw(3) << token._line << ", Column " << setw(3) << token._column << ": \"" << token._token << "\"\n";
+}

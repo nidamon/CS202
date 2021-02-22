@@ -9,22 +9,20 @@ This is the Main file for the Simple Tokenizer program
 
 int main()
 {
+	bool bfileInput = false;
 
-	//auto vec = lineToTokens("This     is a test of the      lineToToken function.");
-
-	/*for (auto& i : vec)
+	if (bfileInput)
 	{
-		cout << i << endl;
-	}*/
-
-	auto vec2 = readLines(std::cin);
-
-	for (auto& i : vec2)
-	{
-		cout << i._token << i._line << i._column << endl;
+		// Read file
 	}
+	else
+	{
+		string line;
+		getline(std::cin, line);
+		istringstream stream(line);
 
-	cout << endl;
-
+		auto vecOfTokens = readLines(stream);
+		printTokens(std::cout, vecOfTokens);
+	}
 	return 0;
 }

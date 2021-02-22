@@ -22,6 +22,8 @@ using std::ostream;
 #include <sstream>
 using std::istringstream;
 using std::stringstream;
+#include <iomanip>
+using std::setw;
 
 
 struct TokenAndPosition
@@ -37,7 +39,8 @@ vector<string> lineToTokens(const string& line);
 // Takes an istream and returns a vector of tokens and their positions
 vector<TokenAndPosition> readLines(istream& is);
 
-//void printTokens(ostream& os, const vector<TokenAndPosition>& tokens);
+// Prints the tokens and the line and column where they are located
+void printTokens(ostream& os, const vector<TokenAndPosition>& tokens);
 
 #endif // !SIMPLETOKENIZER_HPP
 
