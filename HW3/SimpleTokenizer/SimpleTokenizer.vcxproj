@@ -138,7 +138,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SimpleTokenizer.cpp" />
     <ClCompile Include="SimpleTokenizerMain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SimpleTokenizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
