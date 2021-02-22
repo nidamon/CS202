@@ -10,11 +10,18 @@ This is the Main file for the Simple Tokenizer program
 int main()
 {
 
-	auto vec = lineToTokens("This     is a test of the      lineToToken function.");
+	//auto vec = lineToTokens("This     is a test of the      lineToToken function.");
 
-	for (auto& i : vec)
+	/*for (auto& i : vec)
 	{
 		cout << i << endl;
+	}*/
+
+	auto vec2 = readLines(std::cin);
+
+	for (auto& i : vec2)
+	{
+		cout << i._token << i._line << i._column << endl;
 	}
 
 	cout << endl;

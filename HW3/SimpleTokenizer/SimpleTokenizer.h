@@ -34,7 +34,9 @@ struct TokenAndPosition
 // Splits line into tokens
 vector<string> lineToTokens(const string& line);
 
-//vector<TokenAndPosition> readLines(istream& is);
+// Takes an istream and returns a vector of tokens and their positions
+vector<TokenAndPosition> readLines(istream& is);
+
 //void printTokens(ostream& os, const vector<TokenAndPosition>& tokens);
 
 #endif // !SIMPLETOKENIZER_HPP

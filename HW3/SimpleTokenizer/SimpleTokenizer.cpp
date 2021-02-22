@@ -20,3 +20,30 @@ vector<string> lineToTokens(const string& line)
 	}
 	return tokens;
 }
+
+// Takes an istream and returns a vector of tokens and their positions
+vector<TokenAndPosition> readLines(istream& is)
+{
+	vector<TokenAndPosition> tokenPos;
+	int lineCount = 0;
+	while (true)
+	{
+		lineCount++;
+
+		string line;
+		getline(is, line);
+		if (!is) // Check istream
+			break;
+		vector<string> tokens = lineToTokens(line);
+		for (auto& token : tokens)
+		{
+			TokenAndPosition temp;
+			temp._token = token;
+			temp._line = lineCount;
+			temp._column = line.find(token) + 1; // Find column where token starts
+			tokenPos.push_back(temp);
+		}
+		cout << lineCount << endl;
+	}
+	return tokenPos;
+}	
