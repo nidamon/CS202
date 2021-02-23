@@ -24,6 +24,8 @@ using std::istringstream;
 using std::stringstream;
 #include <iomanip>
 using std::setw;
+#include <fstream>
+using std::ifstream;
 
 
 struct TokenAndPosition
