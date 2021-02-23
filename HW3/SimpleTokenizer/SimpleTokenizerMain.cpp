@@ -21,8 +21,6 @@ int main(int argc, const char* argv[])
 		{
 			while (true)
 			{
-				string line;
-				getline(fileIn, line);
 				if (!fileIn)
 				{
 					if (fileIn.eof())
