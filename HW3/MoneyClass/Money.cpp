@@ -31,3 +31,13 @@ bool operator==(const Money& lhs, const Money& rhs)
 {
 	return lhs._totalInCents == rhs._totalInCents;
 }
+
+bool operator>(const Money& lhs, const Money& rhs)
+{
+	return lhs._totalInCents > rhs._totalInCents;
+}
+
+bool operator<(const Money& lhs, const Money& rhs)
+{
+	return rhs < lhs;
+}

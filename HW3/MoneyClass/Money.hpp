@@ -10,6 +10,7 @@ This is the header file for the Money Class
 class Money
 {
     friend bool operator==(const Money& lhs, const Money& rhs);
+    friend bool operator>(const Money& lhs, const Money& rhs);
 
 public:
     Money(); // $0.00
@@ -20,6 +21,7 @@ private:
     int _totalInCents;
 };
 
+bool operator<(const Money& lhs, const Money& rhs);
 
 #endif // !MONEY_HPP
 
