@@ -91,7 +91,7 @@ Money& Money::operator/=(const double rhs)
 	// Booleans
 bool operator<(const Money& lhs, const Money& rhs)
 {
-	return rhs < lhs;
+	return rhs > lhs;
 }
 
 bool operator>=(const Money& lhs, const Money& rhs)
@@ -129,4 +129,13 @@ Money operator*(const double lhs, Money rhs)
 Money operator/(Money lhs, const double rhs)
 {
 	return lhs /= rhs;
+}
+
+	// Stream
+std::ostream& operator<<(std::ostream & os, const Money& rhs)
+{
+	if (rhs._totalInCents < 0)
+		os << "-";
+	os << "$" << double(rhs._totalInCents) / 100;
+	return os;
 }

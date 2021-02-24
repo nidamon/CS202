@@ -7,13 +7,15 @@ This is the header file for the Money Class
 #ifndef MONEY_HPP
 #define MONEY_HPP
 
+#include <sstream>
+
 class Money
 {
     friend bool operator==(const Money& lhs, const Money& rhs);
     friend bool operator>(const Money& lhs, const Money& rhs);
     friend Money operator+(const Money& lhs, const Money& rhs);
     friend Money operator-(const Money& rhs);
-
+    friend std::ostream& operator<<(std::ostream & os, const Money& rhs);
 
 public:
     Money(); // $0.00
