@@ -11,6 +11,7 @@ class Money
 {
 public:
     Money();
+    Money(int dollars, int cents);
 
 private:
     int _totalInCents;
