@@ -38,6 +38,21 @@ bool operator>(const Money& lhs, const Money& rhs)
 	return lhs._totalInCents > rhs._totalInCents;
 }
 
+bool operator+(const Money& lhs, const Money& rhs)
+{
+	return lhs._totalInCents + rhs._totalInCents;
+}
+
+
+
+// Class Public
+bool Money::operator+=(const Money& rhs)
+{
+	return this->_totalInCents += rhs._totalInCents;
+}
+
+
+
 // Global
 bool operator<(const Money& lhs, const Money& rhs)
 {
