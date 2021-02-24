@@ -27,6 +27,7 @@ Money::Money(double cash) // Rounded to nearest cent via truncation
 
 // OPERATORS BELOW 
 
+// Friends
 bool operator==(const Money& lhs, const Money& rhs)
 {
 	return lhs._totalInCents == rhs._totalInCents;
@@ -37,7 +38,23 @@ bool operator>(const Money& lhs, const Money& rhs)
 	return lhs._totalInCents > rhs._totalInCents;
 }
 
+// Global
 bool operator<(const Money& lhs, const Money& rhs)
 {
 	return rhs < lhs;
+}
+
+bool operator>=(const Money& lhs, const Money& rhs)
+{
+	return !(lhs < rhs);
+}
+
+bool operator<=(const Money& lhs, const Money& rhs)
+{
+	return !(lhs > rhs);
+}
+
+bool operator!=(const Money& lhs, const Money& rhs)
+{
+	return !(lhs == rhs);
 }

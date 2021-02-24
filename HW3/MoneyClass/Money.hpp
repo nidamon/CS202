@@ -22,6 +22,9 @@ private:
 };
 
 bool operator<(const Money& lhs, const Money& rhs);
+bool operator>=(const Money& lhs, const Money& rhs);
+bool operator<=(const Money& lhs, const Money& rhs);
+bool operator!=(const Money& lhs, const Money& rhs);
 
 #endif // !MONEY_HPP
 
