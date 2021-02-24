@@ -40,30 +40,46 @@ bool operator>(const Money& lhs, const Money& rhs)
 
 Money operator+(const Money& lhs, const Money& rhs)
 {
-	return lhs._totalInCents + rhs._totalInCents;
+	Money temp(lhs._totalInCents);
+	temp += rhs;
+	return temp;
 }
 
-Money operator-(const Money& lhs, const Money& rhs)
+Money operator-(const Money& rhs)
 {
-	return lhs._totalInCents - rhs._totalInCents;
+	return (-rhs._totalInCents);
 }
+
+Money operator*(Money& lhs, const double rhs)
+{
+	double temp = double(lhs._totalInCents) * rhs; // Multiply into a double
+	if (temp < 0) // Check positive or negative
+		lhs._totalInCents = (temp - 0.5); // Round
+	else
+		lhs._totalInCents = (temp + 0.5);
+	return lhs;
+}
+
 
 
 
 // Class Public
 Money Money::operator+=(const Money& rhs)
 {
-	return this->_totalInCents += rhs._totalInCents;
+	this->_totalInCents += rhs._totalInCents;
+	return *this;
 }
 
 Money Money::operator-=(const Money& rhs)
 {
-	return this->_totalInCents -= rhs._totalInCents;
+	this->_totalInCents += -rhs._totalInCents;
+	return *this;
 }
 
 Money Money::operator*=(const Money& rhs)
 {
-	return this->_totalInCents *= rhs._totalInCents;
+	this->_totalInCents *= rhs._totalInCents;
+	return *this;
 }
 
 
@@ -89,7 +105,17 @@ bool operator!=(const Money& lhs, const Money& rhs)
 	return !(lhs == rhs);
 }
 
+Money operator-(const Money& lhs, const Money& rhs)
+{
+	return lhs + -rhs;
+}
+
 Money operator*(Money& lhs, const Money& rhs)
 {
 	return lhs *= rhs;
+}
+
+Money operator*(const double lhs, Money& rhs)
+{
+	return rhs * lhs;
 }

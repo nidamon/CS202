@@ -12,7 +12,8 @@ class Money
     friend bool operator==(const Money& lhs, const Money& rhs);
     friend bool operator>(const Money& lhs, const Money& rhs);
     friend Money operator+(const Money& lhs, const Money& rhs);
-    friend Money operator-(const Money& lhs, const Money& rhs);
+    friend Money operator-(const Money& rhs);
+    friend Money operator*(Money& lhs, const double rhs);
 
 public:
     Money(); // $0.00
@@ -32,7 +33,10 @@ bool operator>=(const Money& lhs, const Money& rhs);
 bool operator<=(const Money& lhs, const Money& rhs);
 bool operator!=(const Money& lhs, const Money& rhs);
 
+Money operator-(const Money& lhs, const Money& rhs);
 Money operator*(Money& lhs, const Money& rhs);
+Money operator*(const double lhs, Money& rhs);
+
 
 #endif // !MONEY_HPP
 
