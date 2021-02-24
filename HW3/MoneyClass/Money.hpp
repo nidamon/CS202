@@ -10,9 +10,10 @@ This is the header file for the Money Class
 class Money
 {
 public:
+    Money();
 
 private:
-
+    int _totalInCents;
 };
 
 
