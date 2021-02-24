@@ -22,9 +22,6 @@ Money::Money(double cash) // Rounded to nearest cent via truncation
 
 
 
-
-
-
 // OPERATORS BELOW 
 
 // Friends
@@ -40,7 +37,7 @@ bool operator>(const Money& lhs, const Money& rhs)
 
 Money operator+(const Money& lhs, const Money& rhs)
 {
-	Money temp(lhs._totalInCents);
+	auto temp(lhs);
 	temp += rhs;
 	return temp;
 }
@@ -58,29 +55,29 @@ Money operator-(const Money& rhs)
 // Class Public
 Money& Money::operator+=(const Money& rhs)
 {
-	this->_totalInCents += rhs._totalInCents;
+	_totalInCents += rhs._totalInCents;
 	return *this;
 }
 
 Money& Money::operator-=(const Money& rhs)
 {
-	this->_totalInCents += -rhs._totalInCents;
+	_totalInCents += -rhs._totalInCents;
 	return *this;
 }
 
 Money& Money::operator*=(const double rhs)
 {
-	double temp = double(this->_totalInCents) * rhs; // Multiply into a double
+	double temp = double(_totalInCents) * rhs; // Multiply into a double
 	if (temp < 0) // Check positive or negative
-		this->_totalInCents = (temp - 0.5); // Round
+		_totalInCents = (temp - 0.5); // Round
 	else
-		this->_totalInCents = (temp + 0.5);
+		_totalInCents = (temp + 0.5);
 	return *this;
 }
 
 Money& Money::operator/=(const double rhs)
 {
-	this->_totalInCents /= rhs;
+	_totalInCents /= rhs;
 	return *this;
 }
 
@@ -113,7 +110,9 @@ bool operator!=(const Money& lhs, const Money& rhs)
 	// Arithmetic
 Money operator-(const Money& lhs, const Money& rhs)
 {
-	return lhs + -rhs;
+	auto temp(lhs);
+	temp -= rhs;
+	return temp;
 }
 
 Money operator*(Money lhs, double rhs)
@@ -134,8 +133,15 @@ Money operator/(Money lhs, const double rhs)
 	// Stream
 std::ostream& operator<<(std::ostream & os, const Money& rhs)
 {
+	double temp = double(rhs._totalInCents) / 100.0;
 	if (rhs._totalInCents < 0)
+	{
 		os << "-";
-	os << "$" << double(rhs._totalInCents) / 100;
+		temp *= -1; // Make temp positive for output
+	}
+	if (rhs._totalInCents != 0)
+		os << "$" << temp;
+	else
+		os << "$0.00";
 	return os;
 }
