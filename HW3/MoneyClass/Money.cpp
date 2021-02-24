@@ -38,12 +38,12 @@ bool operator>(const Money& lhs, const Money& rhs)
 	return lhs._totalInCents > rhs._totalInCents;
 }
 
-bool operator+(const Money& lhs, const Money& rhs)
+Money operator+(const Money& lhs, const Money& rhs)
 {
 	return lhs._totalInCents + rhs._totalInCents;
 }
 
-bool operator-(const Money& lhs, const Money& rhs)
+Money operator-(const Money& lhs, const Money& rhs)
 {
 	return lhs._totalInCents - rhs._totalInCents;
 }
@@ -51,14 +51,19 @@ bool operator-(const Money& lhs, const Money& rhs)
 
 
 // Class Public
-bool Money::operator+=(const Money& rhs)
+Money Money::operator+=(const Money& rhs)
 {
 	return this->_totalInCents += rhs._totalInCents;
 }
 
-bool Money::operator-=(const Money& rhs)
+Money Money::operator-=(const Money& rhs)
 {
 	return this->_totalInCents -= rhs._totalInCents;
+}
+
+Money Money::operator*=(const Money& rhs)
+{
+	return this->_totalInCents *= rhs._totalInCents;
 }
 
 
@@ -82,4 +87,9 @@ bool operator<=(const Money& lhs, const Money& rhs)
 bool operator!=(const Money& lhs, const Money& rhs)
 {
 	return !(lhs == rhs);
+}
+
+Money operator*(Money& lhs, const Money& rhs)
+{
+	return lhs *= rhs;
 }
