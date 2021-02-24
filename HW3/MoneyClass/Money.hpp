@@ -9,6 +9,8 @@ This is the header file for the Money Class
 
 class Money
 {
+    friend bool operator==(const Money& lhs, const Money& rhs);
+
 public:
     Money(); // $0.00
     Money(int dollars, int cents);
