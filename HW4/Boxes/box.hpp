@@ -15,6 +15,9 @@ using std::string;
 #include <iostream>
 using std::cout;
 using std::endl;
+#include <memory>
+using std::unique_ptr;
+using std::make_unique;
 
 // ########################################################################################################
 // Box
@@ -24,19 +27,19 @@ class Box
 {
 public:
 	Box();
-	Box(unsigned int w, unsigned int h);
+	Box(int w, int h);
 
-	unsigned int getWidth() const;
-	unsigned int getHeight() const;
+	int getWidth() const;
+	int getHeight() const;
 
-	void setWidth(unsigned int w);
-	void setHeight(unsigned int h);
+	void setWidth(int w);
+	void setHeight(int h);
 
 	virtual void print(ostream& os) const = 0;
 	virtual string type() const = 0;
 
-	unsigned int _width;
-	unsigned int _height;
+	int _width;
+	int _height;
 
 };
 
@@ -46,9 +49,10 @@ public:
 
 class FilledBox : public Box
 {
+public:
 	using Box::Box;
 	FilledBox();
-	FilledBox(unsigned int w, unsigned int h);
+	FilledBox(int w, int h);
 
 	void print(ostream& os) const override;
 	string type() const override;
@@ -61,9 +65,10 @@ class FilledBox : public Box
 
 class HollowBox : public Box
 {
+public:
 	using Box::Box;
 	HollowBox();
-	HollowBox(unsigned int w, unsigned int h);
+	HollowBox(int w, int h);
 
 	void print(ostream& os) const override;
 	string type() const override;
@@ -75,15 +80,18 @@ class HollowBox : public Box
 
 class CheckeredBox : public Box
 {
+public:
 	using Box::Box;
 	CheckeredBox();
-	CheckeredBox(unsigned int w, unsigned int h);
+	CheckeredBox(int w, int h);
 
 	void print(ostream& os) const override;
 	string type() const override;
 };
 
 ostream& operator<<(ostream& os, const Box& b);
+
+unique_ptr<Box> boxFactory(char c, int w, int h);
 
 #endif // !BOX_HPP
 
