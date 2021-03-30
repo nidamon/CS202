@@ -28,6 +28,7 @@ class Box
 public:
 	Box();
 	Box(int w, int h);
+	virtual ~Box();
 
 	int getWidth() const;
 	int getHeight() const;

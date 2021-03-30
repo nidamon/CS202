@@ -20,6 +20,8 @@ ostream& operator<<(ostream& os, const Box& b)
 Box::Box() : _width{1}, _height{1} {}
 Box::Box(int w, int h) : _width{ w }, _height{ h } {}
 
+Box::~Box() {}
+
 // Returns the width
 int Box::getWidth() const
 {
@@ -82,8 +84,10 @@ void HollowBox::print(ostream& os) const
 	{
 		for (int x = 0; x < _width; x++)
 		{
-			if((x == 0 || x == _width - 1) || (y == 0 || y == _height - 1))
+			if ((x == 0 || x == _width - 1) || (y == 0 || y == _height - 1))
 				os << 'x';
+			else
+				os << ' ';
 		}
 		os << '\n';
 	}
@@ -109,6 +113,8 @@ void CheckeredBox::print(ostream& os) const
 		{
 			if ((y + x) % 2 == 0)
 				os << 'x';
+			else
+				os << ' ';
 		}
 		os << '\n';
 	}
