@@ -52,6 +52,18 @@ void Box::setHeight(unsigned int h)
 FilledBox::FilledBox() : Box() {}
 FilledBox::FilledBox(unsigned int w, unsigned int h) : Box(w, h) {}
 
+void FilledBox::print(ostream& os) const
+{
+	for (unsigned int y = 0; y < _height; y++)
+	{
+		for (unsigned int x = 0; x < _width; x++)
+		{
+			os << 'x';
+		}
+		os << '\n';
+	}
+}
+
 string FilledBox::type() const
 {
 	return "Filled";
@@ -64,6 +76,19 @@ string FilledBox::type() const
 HollowBox::HollowBox() : Box() {}
 HollowBox::HollowBox(unsigned int w, unsigned int h) : Box(w, h) {}
 
+void HollowBox::print(ostream& os) const
+{
+	for (unsigned int y = 0; y < _height; y++)
+	{
+		for (unsigned int x = 0; x < _width; x++)
+		{
+			if((x == 0 || x == _width - 1) || (y == 0 || y == _height - 1))
+				os << 'x';
+		}
+		os << '\n';
+	}
+}
+
 string HollowBox::type() const
 {
 	return "Hollow";
@@ -75,6 +100,19 @@ string HollowBox::type() const
 
 CheckeredBox::CheckeredBox() : Box() {}
 CheckeredBox::CheckeredBox(unsigned int w, unsigned int h) : Box(w, h) {}
+
+void CheckeredBox::print(ostream& os) const
+{
+	for (unsigned int y = 0; y < _height; y++)
+	{
+		for (unsigned int x = 0; x < _width; x++)
+		{
+			if ((y + x) % 2 == 0)
+				os << 'x';
+		}
+		os << '\n';
+	}
+}
 
 string CheckeredBox::type() const
 {

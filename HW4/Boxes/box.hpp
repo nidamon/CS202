@@ -50,6 +50,7 @@ class FilledBox : public Box
 	FilledBox();
 	FilledBox(unsigned int w, unsigned int h);
 
+	void print(ostream& os) const override;
 	string type() const override;
 
 };
@@ -64,6 +65,7 @@ class HollowBox : public Box
 	HollowBox();
 	HollowBox(unsigned int w, unsigned int h);
 
+	void print(ostream& os) const override;
 	string type() const override;
 };
 
@@ -77,6 +79,7 @@ class CheckeredBox : public Box
 	CheckeredBox();
 	CheckeredBox(unsigned int w, unsigned int h);
 
+	void print(ostream& os) const override;
 	string type() const override;
 };
 
