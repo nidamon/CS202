@@ -12,6 +12,9 @@ This is the header file for the Box Class and it's derivatives
 using std::ostream;
 #include <string>
 using std::string;
+#include <iostream>
+using std::cout;
+using std::endl;
 
 // ########################################################################################################
 // Box
@@ -45,6 +48,9 @@ class FilledBox : public Box
 {
 	using Box::Box;
 	FilledBox();
+	FilledBox(unsigned int w, unsigned int h);
+
+	string type() const override;
 
 };
 
@@ -56,6 +62,9 @@ class HollowBox : public Box
 {
 	using Box::Box;
 	HollowBox();
+	HollowBox(unsigned int w, unsigned int h);
+
+	string type() const override;
 };
 
 // ########################################################################################################
@@ -66,6 +75,9 @@ class CheckeredBox : public Box
 {
 	using Box::Box;
 	CheckeredBox();
+	CheckeredBox(unsigned int w, unsigned int h);
+
+	string type() const override;
 };
 
 ostream& operator<<(ostream& os, const Box& b);
