@@ -73,8 +73,8 @@ Rational<U> operator+(const Rational<U>& lhs, const Rational<U>& rhs) { //canoni
     return temp;
 }
 
-template <typename T>
-Rational<T>& Rational<T>::operator+=(const Rational<T>& rhs) {
+template <typename U>
+Rational<U>& Rational<U>::operator+=(const Rational<U>& rhs) {
     // a/b + c/d = (ad+bc)/ad
     _numerator = _numerator * rhs._denominator + rhs._numerator * _denominator;
     _denominator *= rhs._denominator;
@@ -82,8 +82,8 @@ Rational<T>& Rational<T>::operator+=(const Rational<T>& rhs) {
     return *this;
 }
 
-template <typename T>
-void Rational<T>::reduce() {
+template <typename U>
+void Rational<U>::reduce() {
     auto gcd = std::gcd(_numerator, _denominator);
     _numerator /= gcd;
     _denominator /= gcd;
@@ -98,22 +98,26 @@ Rational<U> operator-(const Rational<U>& lhs) {
     return { -lhs._numerator, lhs._denominator };
 }
 
-template <typename T>
-Rational<T>& Rational<T>::operator-=(const Rational<T>& rhs) { //Canonical
+template <typename U>
+Rational<U>& Rational<U>::operator-=(const Rational<U>& rhs) { //Canonical
     *this = *this - rhs; //uses Rational::operator- to define operator-=
+    reduce();
     return *this;
 }
 
-template <typename T>
-Rational<T>& Rational<T>::operator*=(const Rational<T>& rhs) {
+template <typename U>
+Rational<U>& Rational<U>::operator*=(const Rational<U>& rhs) {
     _numerator *= rhs._numerator;
     _denominator *= rhs._denominator;
+    reduce();
     return *this;
 }
 
-template <typename T>
-Rational<T>& Rational<T>::operator/=(const Rational<T>& rhs) {
-    return *this *= {rhs._denominator, rhs._numerator};
+template <typename U>
+Rational<U>& Rational<U>::operator/=(const Rational<U>& rhs) {
+    *this *= {rhs._denominator, rhs._numerator};
+    reduce();
+    return *this;
 }
 
 template <typename U>
@@ -133,57 +137,57 @@ Rational<U> operator/(Rational<U> lhs, const Rational<U>& rhs) { //Canonical
     return lhs /= rhs;
 }
 
-template <typename T>
-Rational<T>& Rational<T>::operator++() {//prefix ++
+template <typename U>
+Rational<U>& Rational<U>::operator++() {//prefix ++
     return *this += 1;
 }
 
-template <typename T>
-Rational<T> Rational<T>::operator++(int) {//postfix ++
+template <typename U>
+Rational<U> Rational<U>::operator++(int) {//postfix ++
     auto copy{ *this };
     ++(*this);
     return copy;
 }
 
-template <typename T>
-Rational<T>& Rational<T>::operator--() {//prefix --
+template <typename U>
+Rational<U>& Rational<U>::operator--() {//prefix --
     return *this -= 1;
 }
 
-template <typename T>
-Rational<T> Rational<T>::operator--(int) {//postfix --
+template <typename U>
+Rational<U> Rational<U>::operator--(int) {//postfix --
     auto copy{ *this };
     --(*this);
     return copy;
 }
 
-template <typename T>
-bool operator==(const Rational<T>& lhs, const Rational<T>& rhs) {
+template <typename U>
+bool operator==(const Rational<U>& lhs, const Rational<U>& rhs) {
     return lhs._numerator == rhs._numerator && lhs._denominator == rhs._denominator;
 }
 
-template <typename T>
-bool operator<(const Rational<T>& lhs, const Rational<T>& rhs) {
+template <typename U>
+bool operator<(const Rational<U>& lhs, const Rational<U>& rhs) {
     return lhs._numerator * rhs._denominator < rhs._numerator * lhs._denominator;
 }
 
-template <typename T>
-bool operator!=(const Rational<T>& lhs, const Rational<T>& rhs) {//canonical
+template <typename U>
+bool operator!=(const Rational<U>& lhs, const Rational<U>& rhs) {//canonical
     return !(rhs == lhs);
 }
 
-template <typename T>
-bool operator>(const Rational<T>& lhs, const Rational<T>& rhs) {//canonical
+template <typename U>
+bool operator>(const Rational<U>& lhs, const Rational<U>& rhs) {//canonical
     return rhs < lhs;
 }
 
-template <typename T>
-bool operator<=(const Rational<T>& lhs, const Rational<T>& rhs) {//canonical
+template <typename U>
+bool operator<=(const Rational<U>& lhs, const Rational<U>& rhs) {//canonical
     return !(rhs > lhs);
 }
 
-template <typename T>
-bool operator>=(const Rational<T>& lhs, const Rational<T>& rhs) {//canonical
+template <typename U>
+bool operator>=(const Rational<U>& lhs, const Rational<U>& rhs) {//canonical
     return !(rhs < lhs);
 }
 
