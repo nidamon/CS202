@@ -8,17 +8,20 @@ This is the hpp file for the Template Read() and Write() program
 #define MYREADWRITE_HPP
 
 #include <ostream>
+#include <fstream>
+using std::ifstream;
+using std::ios;
 
 template <typename T>
- void myWrite(std::ofstream& ofs, T read)
+ void myWrite(std::ofstream& ofs, const T& write)
  {
-
+     ofs.write(reinterpret_cast<const char*>(&write), sizeof(T));
  }
 
  template <typename T>
- T myRead(std::ofstream& ofs, T read)
+ void myRead(std::ifstream& ifs, T& read)
  {
-
+     ifs.read(reinterpret_cast<char*>(&read), sizeof(T));
  }
 
 #endif // !MYREADWRITE_HPP
