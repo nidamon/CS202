@@ -11,7 +11,10 @@ This is the header file for the recursion functions.
 using std::cout;
 using std::endl;
 
-// Returns the nth number in the Fibonacci sequence
+// Returns the nth number in the Fibonacci sequence using recursion
 int fib(int n);
+
+// Returns the nth number in the Fibonacci sequence using a loop
+int fib_loop(int n);
 
 #endif // !RECURSION_HPP

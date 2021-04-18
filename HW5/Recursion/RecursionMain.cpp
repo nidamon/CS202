@@ -11,5 +11,8 @@ This is the main file for the recursion program.
 int main()
 {
 	for(int i = 0; i < 20; i++)
-		cout << fib(i) << endl;
+		cout << fib(i) << " ";
+	cout << endl;
+	for (int i = 0; i < 20; i++)
+		cout << fib_loop(i) << " ";
 }

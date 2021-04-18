@@ -17,3 +17,27 @@ int fib(int n)
 
 	return fib(n - 1) + fib(n - 2);
 }
+
+// Returns the nth number in the Fibonacci sequence using a loop
+int fib_loop(int n)
+{
+	int n_1 = 0;
+	int n_2 = 1;
+	int fibValue = 0;
+
+	if (n == 0)
+		return 0;
+	if (n == 1)
+		return 1;
+
+	int nCount = 0;
+	while (nCount != n)
+	{
+		fibValue = n_1 + n_2;
+		n_2 = n_1;
+		n_1 = fibValue;
+
+		nCount++;
+	}
+	return fibValue;
+}
