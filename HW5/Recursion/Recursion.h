@@ -17,4 +17,7 @@ int fib(int n);
 // Returns the nth number in the Fibonacci sequence using a loop
 int fib_loop(int n);
 
+// Returns Ackermann's number
+int ack(int m, int n);
+
 #endif // !RECURSION_HPP
