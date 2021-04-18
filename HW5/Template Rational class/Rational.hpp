@@ -15,14 +15,19 @@ This is the hpp file for the Template Rational class.
 // _denominator is always > 0
 template <typename T>
 class Rational {
-    friend std::ostream& operator<<(std::ostream&, const Rational& rhs);
-    friend Rational operator+(const Rational& lhs, const Rational& rhs);
-    friend Rational operator-(const Rational& lhs);
-    friend bool operator==(const Rational& lhs, const Rational& rhs);
-    friend bool operator<(const Rational& lhs, const Rational& rhs);
+    template <typename U>
+    friend std::ostream& operator<<(std::ostream&, const Rational<U>& rhs);
+    template <typename U>
+    friend Rational<U> operator+(const Rational<U>& lhs, const Rational<U>& rhs);
+    template <typename U>
+    friend Rational<U> operator-(const Rational<U>& lhs);
+    template <typename U>
+    friend bool operator==(const Rational<U>& lhs, const Rational<U>& rhs);
+    template <typename U>
+    friend bool operator<(const Rational<U>& lhs, const Rational<U>& rhs);
 
 public:
-    Rational(T, T = 1); //NOLINT(google-explicit-constructor): Allow implicit conversion from int
+    Rational(T = 0, T = 1); //NOLINT(google-explicit-constructor): Allow implicit conversion from int
     Rational& operator+=(const Rational& rhs);
     Rational& operator-=(const Rational& rhs);
     Rational& operator*=(const Rational& rhs);
@@ -53,16 +58,16 @@ Rational<T>::Rational(T num, T den) : _numerator(num), _denominator(den) {
     reduce();
 }
 
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const Rational<T>& rhs) {
+template <typename U>
+std::ostream& operator<<(std::ostream& os, const Rational<U>& rhs) {
     os << rhs._numerator;
     if (rhs._denominator != 1)
         os << "/" << rhs._denominator;
     return os;
 }
 
-template <typename T>
-Rational<T> operator+(const Rational<T>& lhs, const Rational<T>& rhs) { //canonical
+template <typename U>
+Rational<U> operator+(const Rational<U>& lhs, const Rational<U>& rhs) { //canonical
     auto temp{ lhs };
     temp += rhs;
     return temp;
@@ -88,8 +93,8 @@ void Rational<T>::reduce() {
     }
 }
 
-template <typename T>
-Rational<T> operator-(const Rational<T>& lhs) {
+template <typename U>
+Rational<U> operator-(const Rational<U>& lhs) {
     return { -lhs._numerator, lhs._denominator };
 }
 
@@ -111,20 +116,20 @@ Rational<T>& Rational<T>::operator/=(const Rational<T>& rhs) {
     return *this *= {rhs._denominator, rhs._numerator};
 }
 
-template <typename T>
-Rational<T> operator-(const Rational<T>& lhs, const Rational<T>& rhs) {
+template <typename U>
+Rational<U> operator-(const Rational<U>& lhs, const Rational<U>& rhs) {
     return lhs + -rhs;
 }
 
 // pass lhs by value because we were going to copy it anyway
-template <typename T>
-Rational<T> operator*(Rational<T> lhs, const Rational<T>& rhs) { //Canonical
+template <typename U>
+Rational<U> operator*(Rational<U> lhs, const Rational<U>& rhs) { //Canonical
     return lhs *= rhs;
 }
 
 // pass lhs by value because we were going to copy it anyway
-template <typename T>
-Rational<T> operator/(Rational<T> lhs, const Rational<T>& rhs) { //Canonical
+template <typename U>
+Rational<U> operator/(Rational<U> lhs, const Rational<U>& rhs) { //Canonical
     return lhs /= rhs;
 }
 
